@@ -50,24 +50,22 @@
 
         /* Header Area */
         header {
-            padding: 30px 0 20px;
+            padding: 20px 0 15px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
         }
 
         .logo-wrapper {
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* 가로 배치 */
             align-items: center;
-            margin-bottom: 15px;
+            gap: 12px;
         }
 
         .official-logo-mark {
             position: relative;
-            width: 65px;
-            height: 65px;
-            margin-bottom: 12px;
+            width: 60px; /* 조금 더 콤팩트하게 */
+            height: 60px;
         }
 
         .circle-outer {
@@ -434,12 +432,12 @@
     <div class="container">
         <header>
             <div class="logo-wrapper">
-                <div class="official-logo-mark" style="border:none; width:80px; height:80px;">
-                    <img src="osunyi_logo.png" alt="오순이 로고" style="width:100%; border-radius:50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <div class="official-logo-mark" style="border:none;">
+                    <img src="osunyi_logo.png" alt="오순이 캐릭터" style="width:100%; border-radius:50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 </div>
-                <div class="logo-text-group">
-                    <div class="text-owner" style="font-family:'Noto Sans KR', sans-serif;">오순이</div>
-                    <div class="text-slogan">Owner AI Agent</div>
+                <div class="logo-text-group" style="text-align: left;">
+                    <img src="osunyi_text.png" alt="오순이 이름" style="height: 35px; display: block; margin-bottom: 2px;">
+                    <div class="text-slogan" style="font-size: 9px; margin-left: 2px;">Owner AI Agent</div>
                 </div>
             </div>
         </header>
