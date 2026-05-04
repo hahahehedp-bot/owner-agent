@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>오순이 (Osuny)</title>
+    <title>?ㅼ닚??(Osuny)</title>
     
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json?v=1.0.2">
@@ -22,11 +22,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        // 캐시된 예전 버전의 팝업 강제 무력화
+        // 罹먯떆???덉쟾 踰꾩쟾???앹뾽 媛뺤젣 臾대젰??
         window.alert = function(msg) { 
             console.log("Blocked Alert:", msg);
-            if(msg.includes("프롬프트")) {
-                // 꼭 필요한 알림만 커스텀하게 허용 (선택 사항)
+            if(msg.includes("?꾨＼?꾪듃")) {
+                // 瑗??꾩슂???뚮┝留?而ㅼ뒪??섍쾶 ?덉슜 (?좏깮 ?ы빆)
                 confirm(msg); 
             }
             return true; 
@@ -34,7 +34,7 @@
     </script>
     <style>
         :root {
-            --primary-bg: #fdfaf9; /* 부드러운 크림 화이트 */
+            --primary-bg: #fdfaf9; /* 遺?쒕윭???щ┝ ?붿씠??*/
             --card-bg: #ffffff;
             --accent-rose: linear-gradient(135deg, #e5b2a4 0%, #f2d1c9 50%, #d49a8b 100%);
             --official-navy: #1a1a5e;
@@ -61,28 +61,28 @@
         }
 
         .container {
-            padding: 10px 20px 60px; /* 상단 패딩 대폭 축소 */
+            padding: 10px 20px 60px; /* ?곷떒 ?⑤뵫 ???異뺤냼 */
             max-width: 500px;
             margin: 0 auto;
         }
 
         /* Header Area */
         header {
-            padding: 5px 0 5px; /* 헤더 여백 대폭 축소 */
+            padding: 5px 0 5px; /* ?ㅻ뜑 ?щ갚 ???異뺤냼 */
             display: flex;
             justify-content: center;
         }
 
         .logo-wrapper {
             display: flex;
-            flex-direction: row; /* 가로 배치 */
+            flex-direction: row; /* 媛濡?諛곗튂 */
             align-items: center;
             gap: 12px;
         }
 
         .official-logo-mark {
             position: relative;
-            width: 60px; /* 조금 더 콤팩트하게 */
+            width: 60px; /* 議곌툑 ??肄ㅽ뙥?명븯寃?*/
             height: 60px;
         }
 
@@ -141,7 +141,7 @@
 
         /* Welcome Section */
         .welcome-box {
-            margin-bottom: 10px; /* 제목 하단 여백 축소 */
+            margin-bottom: 10px; /* ?쒕ぉ ?섎떒 ?щ갚 異뺤냼 */
             text-align: center;
         }
 
@@ -166,14 +166,14 @@
         /* Menu Grid */
         .menu-grid {
             display: grid;
-            gap: 10px; /* 버튼 간격 축소 (일정 항목과 동일) */
+            gap: 10px; /* 踰꾪듉 媛꾧꺽 異뺤냼 (?쇱젙 ??ぉ怨??숈씪) */
         }
 
         .menu-card {
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 12px; /* 라운드 살짝 축소 */
-            padding: 8px 16px; /* 패딩 최소화 */
+            border-radius: 12px; /* ?쇱슫???댁쭩 異뺤냼 */
+            padding: 8px 16px; /* ?⑤뵫 理쒖냼??*/
             display: flex;
             align-items: center;
             box-shadow: var(--shadow);
@@ -188,7 +188,7 @@
         }
 
         .icon-box {
-            width: 32px; /* 아이콘 추가 축소 */
+            width: 32px; /* ?꾩씠肄?異붽? 異뺤냼 */
             height: 32px;
             background: var(--accent-rose);
             border-radius: 8px;
@@ -209,7 +209,7 @@
         }
 
         .menu-info p {
-            display: block; /* 설명 텍스트 복구 */
+            display: block; /* ?ㅻ챸 ?띿뒪??蹂듦뎄 */
             font-size: 11px;
             color: var(--text-dim);
             font-weight: 400;
@@ -217,11 +217,11 @@
 
         /* Quick Action Bar */
         .schedule-section {
-            margin-top: 15px; /* 메뉴와 일정 사이 간격 축소 */
+            margin-top: 15px; /* 硫붾돱? ?쇱젙 ?ъ씠 媛꾧꺽 異뺤냼 */
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 15px; /* 패딩 살짝 축소 */
+            padding: 15px; /* ?⑤뵫 ?댁쭩 異뺤냼 */
             box-shadow: var(--shadow);
         }
 
@@ -466,7 +466,7 @@
             font-size: 32px;
             box-shadow: 0 10px 25px rgba(229, 178, 164, 0.8);
             cursor: pointer;
-            z-index: 5000; /* 최상단 레이어 */
+            z-index: 5000; /* 理쒖긽???덉씠??*/
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 2px solid white;
         }
@@ -483,9 +483,9 @@
             width: 100%;
             height: 100%;
             background: white;
-            display: none; /* 초기 숨김 */
+            display: none; /* 珥덇린 ?④? */
             flex-direction: column;
-            z-index: 6000; /* FAB보다 위에 */
+            z-index: 6000; /* FAB蹂대떎 ?꾩뿉 */
             animation: slideInFull 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -521,7 +521,7 @@
         /* AI Message with Avatar - Redesigned for Full Width */
         .ai-msg-container {
             display: flex;
-            flex-direction: column; /* 세로 정렬 */
+            flex-direction: column; /* ?몃줈 ?뺣젹 */
             align-items: flex-start;
             gap: 12px;
             align-self: stretch;
@@ -572,7 +572,7 @@
         }
 
         .msg.ai {
-            max-width: 100%; /* 너비 전체 사용 */
+            max-width: 100%; /* ?덈퉬 ?꾩껜 ?ъ슜 */
             width: 100%;
             background: white;
             color: var(--text-main);
@@ -580,7 +580,7 @@
             border-top-left-radius: 4px;
             box-shadow: var(--shadow);
             border: 1px solid rgba(229, 178, 164, 0.2);
-            padding: 20px; /* 여유있는 패딩 */
+            padding: 20px; /* ?ъ쑀?덈뒗 ?⑤뵫 */
         }
 
         /* Markdown Styling inside AI Msg */
@@ -638,7 +638,7 @@
         footer {
             margin-top: 40px;
             text-align: center;
-            padding-bottom: 100px; /* FAB 공간 확보 */
+            padding-bottom: 100px; /* FAB 怨듦컙 ?뺣낫 */
         }
 
         .footer-text {
@@ -771,50 +771,50 @@
         <header>
             <div class="logo-wrapper">
                 <div class="official-logo-mark" style="border:none; overflow: hidden; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 75px; height: 75px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-                    <img src="assets/osuny_logo.png" alt="오순이 캐릭터" style="height: 100px; width: auto; object-fit: contain;">
+                    <img src="assets/osuny_logo.png" alt="?ㅼ닚??罹먮┃?? style="height: 100px; width: auto; object-fit: contain;">
                 </div>
                 <div class="logo-text-group" style="height: 60px; width: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-left: -10px;">
-                    <img src="assets/osuny_text.png" alt="오순이 이름" style="height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-top: 2px;">
+                    <img src="assets/osuny_text.png" alt="?ㅼ닚???대쫫" style="height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-top: 2px;">
                 </div>
             </div>
         </header>
 
         <section class="welcome-box animate">
-            <h1>리더님의 <span class="highlight">빛나는 성공</span>을 위하여</h1>
+            <h1>由щ뜑?섏쓽 <span class="highlight">鍮쏅굹???깃났</span>???꾪븯??/h1>
         </section>
 
         <!-- Home View -->
         <div id="homeView">
             <nav class="menu-grid">
                 <a href="#resource" class="menu-card animate delay-1" onclick="showView('resource')">
-                    <div class="icon-box">✨</div>
+                    <div class="icon-box">??/div>
                     <div class="menu-info">
-                        <h2>제품 자료실</h2>
-                        <p>리버스12, 세노이드 상세 자료 및 영상</p>
+                        <h2>?쒗뭹 ?먮즺??/h2>
+                        <p>由щ쾭??2, ?몃끂?대뱶 ?곸꽭 ?먮즺 諛??곸긽</p>
                     </div>
                 </a>
 
                 <a href="#" class="menu-card animate delay-2">
-                    <div class="icon-box">💎</div>
+                    <div class="icon-box">?뭿</div>
                     <div class="menu-info">
-                        <h2>마스터 교육 센터</h2>
-                        <p>줌 강연 다시보기 및 성공 로드맵</p>
+                        <h2>留덉뒪??援먯쑁 ?쇳꽣</h2>
+                        <p>以?媛뺤뿰 ?ㅼ떆蹂닿린 諛??깃났 濡쒕뱶留?/p>
                     </div>
                 </a>
 
                 <a href="#" class="menu-card animate delay-3">
-                    <div class="icon-box">💄</div>
+                    <div class="icon-box">?뭵</div>
                     <div class="menu-info">
-                        <h2>AI 마케팅 무기</h2>
-                        <p>성공을 부르는 SNS 자동 생성 도구</p>
+                        <h2>AI 留덉???臾닿린</h2>
+                        <p>?깃났??遺瑜대뒗 SNS ?먮룞 ?앹꽦 ?꾧뎄</p>
                     </div>
                 </a>
             </nav>
 
             <section class="schedule-section animate delay-3">
                 <div class="schedule-header">
-                    <h3>📅 5월 세미나 일정</h3>
-                    <span class="btn-view-all" id="openCalImg">전체 이미지 보기</span>
+                    <h3>?뱟 5???몃????쇱젙</h3>
+                    <span class="btn-view-all" id="openCalImg">?꾩껜 ?대?吏 蹂닿린</span>
                 </div>
                 
                 <div class="carousel-container">
@@ -831,12 +831,12 @@
         <!-- Resource View (Hidden by default) -->
         <div id="resourceView" style="display: none;">
             <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                <a href="#" class="btn-back" onclick="showView('home')" style="text-decoration: none; background: var(--official-navy); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer;">← 뒤로가기</a>
+                <a href="#" class="btn-back" onclick="showView('home')" style="text-decoration: none; background: var(--official-navy); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer;">???ㅻ줈媛湲?/a>
             </div>
             <section class="schedule-section" style="margin-top: 0;">
                 <div class="schedule-header">
-                    <h3>📂 제품 자료실</h3>
-                    <span class="add-label">📥 탭하여 열기 (공유-저장)</span>
+                    <h3>?뱛 ?쒗뭹 ?먮즺??/h3>
+                    <span class="add-label">?뱿 ??븯???닿린 (怨듭쑀-???</span>
                 </div>
                 <div class="carousel-container">
                     <div class="carousel-track" id="resourceCarousel">
@@ -850,47 +850,47 @@
         </div>
 
         <div class="compact-prompt animate delay-3">
-            <p>🪄 오늘의 마케팅 마법</p>
-            <a href="#" class="btn-copy-mini btn-prompt">프롬프트 복사</a>
+            <p>?챷 ?ㅻ뒛??留덉???留덈쾿</p>
+            <a href="#" class="btn-copy-mini btn-prompt">?꾨＼?꾪듃 蹂듭궗</a>
         </div>
 
         <footer>
-            <p class="footer-text">© 2026 AI Thinking Lab for (주)오너</p>
+            <p class="footer-text">짤 2026 AI Thinking Lab for (二??ㅻ꼫</p>
             <p class="footer-text">Managing Partner: Yoo Yeo-reum</p>
         </footer>
     </div>
 
     <!-- AI Chat Components -->
-    <div class="chat-fab" id="chatFab">💬</div>
+    <div class="chat-fab" id="chatFab">?뮠</div>
 
     <div class="chat-window" id="chatWindow">
         <div class="chat-header">
-            <h4>오너 AI 비서 오순이</h4>
-            <span style="cursor:pointer" id="closeChat">✕</span>
+            <h4>?ㅻ꼫 AI 鍮꾩꽌 ?ㅼ닚??/h4>
+            <span style="cursor:pointer" id="closeChat">??/span>
         </div>
         <div class="chat-body" id="chatBody">
             <div style="flex: 1;"></div> <!-- Push messages to bottom -->
             <div class="ai-msg-container">
                 <div class="ai-header-info">
-                    <div class="ai-avatar"><img src="osunyi_logo.png" alt="오"></div>
-                    <span class="ai-name-label">오너 AI 비서 오순이</span>
+                    <div class="ai-avatar"><img src="osunyi_logo.png" alt="??></div>
+                    <span class="ai-name-label">?ㅻ꼫 AI 鍮꾩꽌 ?ㅼ닚??/span>
                 </div>
-                <div class="msg ai">반갑습니다, 리더님! 😊 (주)오너의 든든한 조력자 **오순이**예요. 리버스12 마케팅이나 오늘 업무에 대해 무엇이든 저에게 물어보세요!</div>
+                <div class="msg ai">諛섍컩?듬땲?? 由щ뜑?? ?삃 (二??ㅻ꼫???좊뱺??議곕젰??**?ㅼ닚??*?덉슂. 由щ쾭??2 留덉??낆씠???ㅻ뒛 ?낅Т?????臾댁뾿?대뱺 ??먭쾶 臾쇱뼱蹂댁꽭??</div>
             </div>
         </div>
         <div class="chat-footer">
-            <input type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요...">
-            <button class="chat-send" id="sendBtn">➤</button>
+            <input type="text" class="chat-input" id="chatInput" placeholder="硫붿떆吏瑜??낅젰?섏꽭??..">
+            <button class="chat-send" id="sendBtn">??/button>
         </div>
     </div>
 
     <!-- Password Modal -->
     <div class="modal-overlay" id="pwModal">
         <div class="modal-content">
-            <h3>🔑 마스터 키 입력</h3>
-            <p>파트너 전용 공간입니다.<br>공유받으신 비밀번호를 입력해 주세요.</p>
-            <input type="password" class="pw-input" id="pwInput" placeholder="비밀번호 입력">
-            <button class="btn-verify" id="verifyBtn">인증하기</button>
+            <h3>?뵎 留덉뒪?????낅젰</h3>
+            <p>?뚰듃???꾩슜 怨듦컙?낅땲??<br>怨듭쑀諛쏆쑝??鍮꾨?踰덊샇瑜??낅젰??二쇱꽭??</p>
+            <input type="password" class="pw-input" id="pwInput" placeholder="鍮꾨?踰덊샇 ?낅젰">
+            <button class="btn-verify" id="verifyBtn">?몄쬆?섍린</button>
         </div>
     </div>
 
@@ -906,55 +906,55 @@
         const pwInput = document.getElementById('pwInput');
         const verifyBtn = document.getElementById('verifyBtn');
 
-        const CORRECT_PW = "owner777"; // 마스터 키 (여름님이 원하시는 대로 변경 가능)
+        const CORRECT_PW = "owner777"; // 留덉뒪????(?щ쫫?섏씠 ?먰븯?쒕뒗 ?濡?蹂寃?媛??
 
-        // 인증 상태 체크 (한 번 성공하면 다시 묻지 않음)
+        // ?몄쬆 ?곹깭 泥댄겕 (??踰??깃났?섎㈃ ?ㅼ떆 臾살? ?딆쓬)
         function checkAuth() {
             return localStorage.getItem('owner_authorized') === 'true';
         }
 
-        // 메뉴 클릭 시 인증 절차
+        // 硫붾돱 ?대┃ ???몄쬆 ?덉감
         document.querySelectorAll('.menu-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 e.preventDefault();
                 
                 if (checkAuth()) {
-                    // 이미 인증된 경우 자료실로 바로 이동
-                    alert('성공적으로 인증되었습니다. 자료실(구글 드라이브)로 연결됩니다.');
-                    // window.location.href = "여기에_구글_드라이브_링크_입력";
+                    // ?대? ?몄쬆??寃쎌슦 ?먮즺?ㅻ줈 諛붾줈 ?대룞
+                    alert('?깃났?곸쑝濡??몄쬆?섏뿀?듬땲?? ?먮즺??援ш? ?쒕씪?대툕)濡??곌껐?⑸땲??');
+                    // window.location.href = "?ш린??援ш?_?쒕씪?대툕_留곹겕_?낅젰";
                 } else {
-                    // 인증되지 않은 경우 비밀번호 모달 표시
+                    // ?몄쬆?섏? ?딆? 寃쎌슦 鍮꾨?踰덊샇 紐⑤떖 ?쒖떆
                     pwModal.style.display = 'flex';
                     pwInput.focus();
                 }
             });
         });
 
-        // 비밀번호 확인 로직
+        // 鍮꾨?踰덊샇 ?뺤씤 濡쒖쭅
         verifyBtn.addEventListener('click', () => {
             if (pwInput.value === CORRECT_PW) {
                 localStorage.setItem('owner_authorized', 'true');
                 pwModal.style.display = 'none';
-                alert('환영합니다, 리더님! 인증에 성공하였습니다.');
+                alert('?섏쁺?⑸땲?? 由щ뜑?? ?몄쬆???깃났?섏??듬땲??');
             } else {
-                alert('비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
+                alert('鍮꾨?踰덊샇媛 ?쇱튂?섏? ?딆뒿?덈떎. ?ㅼ떆 ?뺤씤??二쇱꽭??');
                 pwInput.value = '';
                 pwInput.focus();
             }
         });
 
-        // 엔터키 지원
+        // ?뷀꽣??吏??
         pwInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') verifyBtn.click();
         });
 
-        // 채팅창 토글 및 브라우저 뒤로가기 대응
+        // 梨꾪똿李??좉? 諛?釉뚮씪?곗? ?ㅻ줈媛湲????
         function toggleChat(show) {
             if (show) {
                 chatWindow.style.display = 'flex';
-                // 뒤로가기 버튼 대응을 위한 상태 추가
+                // ?ㅻ줈媛湲?踰꾪듉 ??묒쓣 ?꾪븳 ?곹깭 異붽?
                 if (window.location.hash !== '#chat') {
-                    history.pushState({view: 'chat'}, '오순이 채팅', '#chat');
+                    history.pushState({view: 'chat'}, '?ㅼ닚??梨꾪똿', '#chat');
                 }
             } else {
                 chatWindow.style.display = 'none';
@@ -967,18 +967,18 @@
         chatFab.addEventListener('click', () => toggleChat(true));
         closeChat.addEventListener('click', () => toggleChat(false));
 
-        // 뒤로가기 버튼 감지하여 채팅창 닫기
+        // ?ㅻ줈媛湲?踰꾪듉 媛먯??섏뿬 梨꾪똿李??リ린
         window.addEventListener('popstate', (e) => {
             if (chatWindow.style.display === 'flex') {
                 chatWindow.style.display = 'none';
             } else {
-                handleRouting(); // 기존 라우팅 처리
+                handleRouting(); // 湲곗〈 ?쇱슦??泥섎━
             }
         });
 
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwnSy3hPnY3CmV6FF-s4h9yQP_tlR_PWK56d_wFF6ns-xXiOxZIad8JGMAxor1Mx8mS/exec';
 
-        // 메시지 전송 함수
+        // 硫붿떆吏 ?꾩넚 ?⑥닔
         async function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
@@ -996,10 +996,10 @@
             aiContainer.className = 'ai-msg-container';
             aiContainer.innerHTML = `
                 <div class="ai-header-info">
-                    <div class="ai-avatar"><img src="assets/osuny_logo.png" alt="오"></div>
-                    <span class="ai-name-label">오너 AI 비서 오순이</span>
+                    <div class="ai-avatar"><img src="assets/osuny_logo.png" alt="??></div>
+                    <span class="ai-name-label">?ㅻ꼫 AI 鍮꾩꽌 ?ㅼ닚??/span>
                 </div>
-                <div class="msg ai"><span class="loading-dots">오순이가 생각 중입니다...</span></div>
+                <div class="msg ai"><span class="loading-dots">?ㅼ닚?닿? ?앷컖 以묒엯?덈떎...</span></div>
             `;
             chatBody.appendChild(aiContainer);
             chatBody.scrollTop = chatBody.scrollHeight;
@@ -1014,10 +1014,10 @@
                     // Markdown Parsing Applied
                     aiBubble.innerHTML = marked.parse(result.reply);
                 } else {
-                    aiBubble.innerText = "리더님, 답변을 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+                    aiBubble.innerText = "由щ뜑?? ?듬???媛?몄삤??以??ㅻ쪟媛 諛쒖깮?덉뒿?덈떎. ?좎떆 ???ㅼ떆 ?쒕룄??二쇱꽭??";
                 }
             } catch (err) {
-                aiBubble.innerText = "죄송합니다, 잠시 연결이 원활하지 않습니다. 🙏";
+                aiBubble.innerText = "二꾩넚?⑸땲?? ?좎떆 ?곌껐???먰솢?섏? ?딆뒿?덈떎. ?솋";
             }
             chatBody.scrollTop = chatBody.scrollHeight;
         }
@@ -1028,358 +1028,161 @@
 
         document.querySelector('.btn-prompt').addEventListener('click', (e) => {
             e.preventDefault();
-            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
+            alert('62踰?留덉뒪???꾨＼?꾪듃媛 蹂듭궗?섏뿀?듬땲?? AI?먭쾶 遺숈뿬?ｌ쑝?몄슂!');
         });
 
-        // --- Render Schedule Function ---
+                                // --- Render Schedule Function ---
         function renderSchedule(data) {
             const carousel = document.getElementById('scheduleCarousel');
             const dotsContainer = document.getElementById('carouselDots');
             carousel.innerHTML = '';
             dotsContainer.innerHTML = '';
-
             data.forEach((week, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'week-slide';
-                
                 let eventsHtml = week.events.map(e => `
                     <div class="event-item">
-                        <div class="event-date">
-                            <span class="day">${e.day}</span>
-                            <span class="month">MAY</span>
-                        </div>
-                        <div class="event-info">
-                            <h4>${e.title}</h4>
-                            <p>${e.time} | ${e.loc}</p>
-                        </div>
+                        <div class="event-date"><span class="day">${e.day}</span><span class="month">MAY</span></div>
+                        <div class="event-info"><h4>${e.title}</h4><p>${e.time} | ${e.loc}</p></div>
                         <div class="btn-cal-add" onclick="addToCalendar('${e.title}', '202605${e.day}T100000', '202605${e.day}T180000', '${e.loc}', '${e.desc}')">➕</div>
                     </div>
                 `).join('');
-
-                slide.innerHTML = `
-                    <div class="week-header">
-                        <div class="week-title">${week.weekTitle}</div>
-                        <div class="add-label">📅 일정 추가</div>
-                    </div>
-                    <div class="event-list">${eventsHtml}</div>
-                `;
+                slide.innerHTML = `<div class="week-header"><div class="week-title">${week.weekTitle}</div><div class="add-label">📅 일정 추가</div></div><div class="event-list">${eventsHtml}</div>`;
                 carousel.appendChild(slide);
-
                 const dot = document.createElement('div');
                 dot.className = `dot ${index === 0 ? 'active' : ''}`;
                 dotsContainer.appendChild(dot);
             });
-
             carousel.addEventListener('scroll', () => {
                 const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
-                document.querySelectorAll('.dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
+                document.querySelectorAll('.dot').forEach((dot, i) => { dot.classList.toggle('active', i === index); });
             });
             carousel.scrollLeft = 0;
         }
 
-        // --- Load Data from CSV ---
         async function loadSchedule() {
-            const fallbackCsv = `Week,Day,Title,Time,Location,Description
-2,04,줌 방송(스킨케어) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
-2,05,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,어린이날 특별 미팅
-2,07,리버스 마스터 & 본사 교육,10:00 / 13:00,본사,제품 및 사업소개
-2,09,A.I 중급 줌교육 (유여름),09:00~12:00,Zoom,AI 중급 실전 전략
-3,11,줌 방송(파이오니) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
-3,12,O.S.R KW컨벤션 랠리,14:00,KW컨벤션,오너 세미나 랠리
-3,13,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
-3,15,대구 OM (김은정 리더),14:00,대구,대구 지역 미팅
-4,18,줌 방송(M&M) & 천안/제주OM,11:00 / 14:00,전국,주간 줌방송
-4,20,호남 리버스 마스터,10:00~16:00,호남,마스터 교육 과정
-4,21,본사 교육 & A.I 초급반,13:00 / 16:00,본사,AI 기초 교육
-4,23,A.I 중급 교육 (유여름),13:00~18:00,미정,AI 중급 실전 교육
-5,26,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,화요 정기 미팅
-5,27,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
-5,28,본사 사업소개 & 생활용품,13:00,본사,본사 정기 교육`;
-
             try {
-                // 실시간 GAS API를 통해 G: 드라이브 schedule.csv 직접 읽기
-                // GAS URL에 파라미터가 중복되지 않도록 깔끔하게 구성
                 const url = new URL(GAS_URL);
                 url.searchParams.append('action', 'getFileContent');
                 url.searchParams.append('fileName', 'schedule.csv');
-                url.searchParams.append('v', new Date().getTime());
-
+                url.searchParams.append('v', Date.now());
                 const response = await fetch(url.toString());
-                if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
-                
-                if (text.startsWith('Error')) {
-                    console.error('오순이 일정 로드 실패:', text);
-                    document.getElementById('scheduleContent').innerHTML = `<div style="color:red; padding:20px; text-align:center;">⚠️ 데이터 연결 오류: ${text}</div>`;
-                    return;
-                }
+                if (text.startsWith('Error')) throw new Error(text);
                 parseAndRender(text);
             } catch (err) {
-                console.warn('Local file or Fetch error, using fallback data:', err);
-                parseAndRender(fallbackCsv);
+                try {
+                    const fallback = await fetch('data/schedule.csv');
+                    const text = await fallback.text();
+                    parseAndRender(text);
+                } catch (e) { console.error('Schedule Load Error'); }
             }
         }
 
         function parseAndRender(csvText) {
             const rows = csvText.split('\n').filter(r => r.trim() && !r.startsWith('Week'));
             const groupedData = {};
-            
             rows.forEach(row => {
-                const [week, day, title, time, loc, desc] = row.split(',');
-                const weekKey = `${week}주차`;
-                if (!groupedData[weekKey]) {
-                    groupedData[weekKey] = { weekTitle: `5월 ${week}주차`, events: [] };
-                }
-                groupedData[weekKey].events.push({ day, title, time, loc, desc });
+                const parts = row.split(',');
+                if (parts.length < 5) return;
+                const [week, day, title, time, loc, desc] = parts.map(s => s.trim());
+                const weekKey = week + "주차";
+                if (!groupedData[weekKey]) groupedData[weekKey] = { weekTitle: "5월 " + weekKey, events: [] };
+                groupedData[weekKey].events.push({ day, title, time, loc, desc: desc || '' });
             });
-
             renderSchedule(Object.values(groupedData));
         }
 
-        // --- Resources Load from CSV ---
         async function loadResources() {
             try {
-                // 실시간 GAS API를 통해 G: 드라이브 resources.csv 직접 읽기
                 const url = new URL(GAS_URL);
                 url.searchParams.append('action', 'getFileContent');
                 url.searchParams.append('fileName', 'resources.csv');
-                url.searchParams.append('v', new Date().getTime());
-
+                url.searchParams.append('v', Date.now());
                 const response = await fetch(url.toString());
-                if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
-
-                if (text.startsWith('Error')) {
-                    console.error('오순이 자료실 로드 실패:', text);
-                    document.getElementById('resourceList').innerHTML = `<div style="color:red; padding:20px; text-align:center;">⚠️ 자료실 연결 오류: ${text}</div>`;
-                    return;
-                }
-                
-                const rows = text.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
-                
-                const groupedData = {};
-                rows.forEach(row => {
-                    const [cat, title, format, size, filename] = row.split(',');
-                    if (!groupedData[cat]) {
-                        groupedData[cat] = { catTitle: cat, items: [] };
-                    }
-                    groupedData[cat].items.push({ title, format, size, filename });
-                });
-
-                renderResources(Object.values(groupedData));
+                if (text.startsWith('Error')) throw new Error(text);
+                processResources(text);
             } catch (err) {
-                console.warn('Resource Load Error:', err);
+                try {
+                    const fallback = await fetch('data/resources.csv');
+                    const text = await fallback.text();
+                    processResources(text);
+                } catch (e) { console.error('Resources Load Error'); }
             }
         }
 
-        function renderResources(data) {
+        function processResources(csvText) {
+            const rows = csvText.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
+            const groupedData = {};
+            rows.forEach(row => {
+                const parts = row.split(',');
+                if (parts.length < 3) return;
+                const [cat, title, link] = parts.map(s => s.trim());
+                if (!groupedData[cat]) {
+                    groupedData[cat] = { catTitle: cat, items: [] };
+                }
+                groupedData[cat].items.push({ title, link });
+            });
+            renderResourcesUI(Object.values(groupedData));
+        }
+
+        function renderResourcesUI(data) {
             const carousel = document.getElementById('resourceCarousel');
             const dotsContainer = document.getElementById('resourceDots');
-            carousel.innerHTML = '';
-            dotsContainer.innerHTML = '';
-
+            carousel.innerHTML = ''; dotsContainer.innerHTML = '';
             data.forEach((cat, index) => {
                 const slide = document.createElement('div');
                 slide.className = 'week-slide';
-                
                 let itemsHtml = cat.items.map(item => `
                     <div class="event-item">
-                        <div class="event-date" style="background: #eef2f3; color: #555;">
-                            <span class="day" style="font-size: 10px;">${item.format}</span>
-                            <span class="month" style="font-size: 8px;">FILE</span>
-                        </div>
-                        <div class="event-info">
-                            <h4>${item.title}</h4>
-                            <p>${item.size} | ${item.format}</p>
-                        </div>
-                        <a href="${item.filename}" target="_blank" class="btn-cal-add" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: none; color: var(--text-dim); box-shadow: none; font-size: 20px;">↓</a>
+                        <div class="event-date" style="background:#eef2f3; color:#555;"><span class="day" style="font-size:10px;">PDF</span><span class="month" style="font-size:8px;">FILE</span></div>
+                        <div class="event-info"><h4>${item.title}</h4><p>자료 다운로드</p></div>
+                        <a href="${item.link}" target="_blank" class="btn-cal-add">⬇️</a>
                     </div>
                 `).join('');
-                
-                slide.innerHTML = `
-                    <div class="week-header">
-                        <div class="week-title" style="background: #eef2f3; color: #555;">${cat.catTitle}</div>
-                        <div class="add-label" style="background: #f0f7ff; color: #5a91d4;">📥 미리보기 후 저장</div>
-                    </div>
-                    <div class="event-list">${itemsHtml}</div>
-                `;
+                slide.innerHTML = `<div class="week-header"><div class="week-title">${cat.catTitle}</div></div><div class="event-list">${itemsHtml}</div>`;
                 carousel.appendChild(slide);
-
                 const dot = document.createElement('div');
                 dot.className = `dot ${index === 0 ? 'active' : ''}`;
                 dotsContainer.appendChild(dot);
             });
-
-            carousel.addEventListener('scroll', () => {
-                const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
-                document.querySelectorAll('#resourceDots .dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-            });
         }
 
-        // --- View Controller (Enhanced Routing) ---
-        function showView(viewId) {
-            const homeView = document.getElementById('homeView');
-            const resourceView = document.getElementById('resourceView');
-            if (!homeView || !resourceView) return;
-
-            if (viewId === 'resource') {
-                homeView.style.display = 'none';
-                resourceView.style.display = 'block';
-                location.hash = 'resource';
-            } else {
-                homeView.style.display = 'block';
-                resourceView.style.display = 'none';
-                location.hash = '';
-            }
-            window.scrollTo(0, 0);
+        async function initPopups() {
+            try {
+                const url = new URL(GAS_URL);
+                url.searchParams.append('action', 'getFolderFiles');
+                url.searchParams.append('folderName', '팝업');
+                url.searchParams.append('v', Date.now());
+                const response = await fetch(url.toString());
+                const popups = await response.json();
+                if (popups.length > 0) {
+                    const slider = document.getElementById('popupSlider');
+                    slider.innerHTML = popups.map(src => `<div class="popup-slide"><img src="${src}" class="popup-image" onclick="openFullscreen('${src}')"></div>`).join('');
+                    document.getElementById('popupOverlay').style.display = 'flex';
+                }
+            } catch (err) { console.error('Popup Error', err); }
         }
+
+        function closePopup() { document.getElementById('popupOverlay').style.display = 'none'; }
+        function openFullscreen(src) { window.open(src, '_blank'); }
+        function addToCalendar(t, s, e, l, d) { window.open(`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t)}&dates=${s}/${e}&details=${encodeURIComponent(d)}&location=${encodeURIComponent(l)}`, '_blank'); }
 
         function handleRouting() {
             const hash = window.location.hash;
-            if (hash === '#resource') {
-                showView('resource');
-                toggleChat(false); // 채팅창 닫기
-            } else if (hash === '#chat') {
-                toggleChat(true); // 채팅창 열기
-            } else {
-                showView('home');
-                toggleChat(false); // 채팅창 닫기
-            }
+            if (hash === '#resources') { showView('resources'); }
+            else if (hash === '#chat') { toggleChat(true); }
+            else { showView('home'); toggleChat(false); }
         }
 
         window.addEventListener('hashchange', handleRouting);
-
-        // 초기 실행 (데이터 로드와 UI 전환 분리)
         window.addEventListener('DOMContentLoaded', () => {
             handleRouting();
             loadSchedule();
             loadResources();
-            
-            // 첫 인사말 마크다운 적용
-            const initialMsg = document.querySelector('.msg.ai');
-            if (initialMsg && typeof marked !== 'undefined') {
-                initialMsg.innerHTML = marked.parse(initialMsg.innerText);
-            }
+            initPopups();
         });
-
-        // --- Modals & Other ---
-        document.querySelector('.btn-prompt').addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
-        });
-
-        const calModal = document.getElementById('calModal');
-        const openCalImg = document.getElementById('openCalImg');
-        const closeCalImg = document.getElementById('closeCalImg');
-
-        openCalImg.addEventListener('click', () => {
-            calModal.style.display = 'flex';
-        });
-
-        closeCalImg.addEventListener('click', () => {
-            calModal.style.display = 'none';
-        });
-
-        function addToCalendar(title, start, end, loc, desc) {
-            const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
-            const url = `${baseUrl}&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
-            window.open(url, '_blank');
-        }
-
-        // --- Popup Logic ---
-        async function initPopups() {
-            console.log('오순이 팝업: 초기화 중...');
-            const hideUntil = localStorage.getItem('hide_popup_until');
-            if (hideUntil && new Date().getTime() < parseInt(hideUntil)) {
-                console.log('오순이 팝업: 오늘은 표시하지 않음 (사용자 설정).');
-                return;
-            }
-
-            try {
-                // 실시간 GAS API 호출 (G: 드라이브 '팝업' 폴더 스캔)
-                const url = new URL(GAS_URL);
-                url.searchParams.append('action', 'getFolderFiles');
-                url.searchParams.append('folderName', '팝업');
-                url.searchParams.append('v', new Date().getTime());
-
-                const response = await fetch(url.toString());
-                if (!response.ok) {
-                    console.warn('Osuny Popup: GAS API error.');
-                    return;
-                }
-                const popups = await response.json();
-                if (!popups || popups.length === 0) {
-                    console.log('Osuny Popup: No active popups found in Drive.');
-                    return;
-                }
-
-                const slider = document.getElementById('popupSlider');
-                slider.innerHTML = ''; // Clear previous
-                popups.forEach(src => {
-                    const slide = document.createElement('div');
-                    slide.className = 'popup-slide';
-                    slide.innerHTML = `<img src="${src}" class="popup-image" onclick="openFullscreen('${src}')">`;
-                    slider.appendChild(slide);
-                });
-
-                document.getElementById('popupOverlay').style.display = 'flex';
-                console.log('오순이 팝업: 성공적으로 표시됨.');
-            } catch (err) {
-                console.error('오순이 팝업 로드 에러:', err);
-            }
-        }
-
-        function closePopup(hideToday) {
-            document.getElementById('popupOverlay').style.display = 'none';
-            if (hideToday) {
-                const tomorrow = new Date();
-                tomorrow.setHours(24, 0, 0, 0); 
-                localStorage.setItem('hide_popup_until', tomorrow.getTime().toString());
-            }
-        }
-
-        function openFullscreen(src) {
-            const overlay = document.getElementById('fullscreenOverlay');
-            const img = document.getElementById('fullscreenImg');
-            img.src = src;
-            overlay.style.display = 'flex';
-        }
-
-        function closeFullscreen() {
-            document.getElementById('fullscreenOverlay').style.display = 'none';
-        }
-
-        // Initialize Popups on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', initPopups);
     </script>
-
-
-    <div class="img-modal" id="calModal">
-        <img src="assets/owner_schedule_may.png" alt="5월 일정표 전체보기">
-        <div class="btn-modal-close" id="closeCalImg">닫기</div>
-    </div>
-
-    <!-- Popup Overlay -->
-    <div class="popup-overlay" id="popupOverlay">
-        <div class="popup-container">
-            <div class="popup-slider" id="popupSlider">
-                <!-- Slides will be injected -->
-            </div>
-            <div class="popup-footer">
-                <button class="popup-btn" onclick="closePopup(true)">오늘 그만보기</button>
-                <button class="popup-btn" onclick="closePopup(false)">닫기</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Fullscreen Overlay -->
-    <div class="fullscreen-overlay" id="fullscreenOverlay">
-        <span class="fullscreen-close" onclick="closeFullscreen()">✕</span>
-        <img src="" class="fullscreen-image" id="fullscreenImg">
-    </div>
 </body>
 </html>
