@@ -225,7 +225,7 @@
             box-shadow: 0 5px 15px rgba(229, 178, 164, 0.4);
         }
 
-        /* Schedule Widget */
+        /* Weekly Schedule Slider */
         .schedule-section {
             margin-top: 25px;
             background: white;
@@ -233,6 +233,7 @@
             padding: 20px;
             border: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
+            overflow: hidden;
         }
 
         .schedule-header {
@@ -250,17 +251,45 @@
             gap: 8px;
         }
 
-        .btn-view-all {
-            font-size: 12px;
-            color: var(--text-dim);
-            text-decoration: underline;
-            cursor: pointer;
+        .carousel-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .carousel-track {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            gap: 15px;
+            padding-bottom: 10px;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .carousel-track::-webkit-scrollbar { display: none; }
+
+        .week-slide {
+            min-width: 100%;
+            scroll-snap-align: start;
+            flex-shrink: 0;
+        }
+
+        .week-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-rose);
+            margin-bottom: 12px;
+            padding: 5px 12px;
+            background: #fff5f2;
+            border-radius: 10px;
+            display: inline-block;
         }
 
         .event-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .event-item {
@@ -289,7 +318,6 @@
         .event-date .month {
             font-size: 10px;
             color: var(--text-dim);
-            text-transform: uppercase;
         }
 
         .event-info {
@@ -297,10 +325,11 @@
         }
 
         .event-info h4 {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: #333;
             margin-bottom: 2px;
+            word-break: keep-all;
         }
 
         .event-info p {
@@ -309,77 +338,38 @@
         }
 
         .btn-cal-add {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
+            font-size: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             cursor: pointer;
             border: 1px solid #eee;
-            transition: all 0.2s;
         }
 
-        .btn-cal-add:active {
-            transform: scale(0.9);
-            background: #fff5f2;
-        }
-
-        /* Image Modal */
-        .img-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 7000;
-            padding: 20px;
-        }
-
-        .img-modal img {
-            max-width: 100%;
-            max-height: 80vh;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        }
-
-        .btn-modal-close {
-            margin-top: 20px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            background: rgba(255,255,255,0.2);
-            padding: 10px 30px;
-            border-radius: 25px;
-        }
-
-        /* Compact Prompt Bar */
-        .compact-prompt {
-            margin-top: 20px;
+        .carousel-nav {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 20px;
-            background: var(--accent-rose);
-            border-radius: 20px;
-            color: white;
-            box-shadow: 0 5px 15px rgba(229, 178, 164, 0.3);
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
         }
 
-        .compact-prompt p { font-size: 13px; font-weight: 600; }
-        .btn-copy-mini {
-            background: white;
-            color: #d49a8b;
-            padding: 6px 15px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 700;
-            text-decoration: none;
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #ddd;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            width: 15px;
+            border-radius: 5px;
+            background: var(--accent-rose);
         }
 
         /* Password Modal */
@@ -631,57 +621,16 @@
 
         <section class="schedule-section animate delay-3">
             <div class="schedule-header">
-                <h3>📅 5월 주요 일정</h3>
-                <span class="btn-view-all" id="openCalImg">전체일정표 보기</span>
+                <h3>📅 5월 세미나 일정</h3>
+                <span class="btn-view-all" id="openCalImg">전체 이미지 보기</span>
             </div>
-            <div class="event-list">
-                <!-- Event 1 -->
-                <div class="event-item">
-                    <div class="event-date">
-                        <span class="day">07</span>
-                        <span class="month">MAY</span>
-                    </div>
-                    <div class="event-info">
-                        <h4>리버스 마스터 세미나</h4>
-                        <p>10:00 | 본사 (서초)</p>
-                    </div>
-                    <div class="btn-cal-add" onclick="addToCalendar('리버스 마스터 세미나', '20260507T100000', '20260507T170000', '본사', '리버스 마스터 교육 과정입니다.')">➕</div>
+            
+            <div class="carousel-container">
+                <div class="carousel-track" id="scheduleCarousel">
+                    <!-- Weeks will be injected by JavaScript -->
                 </div>
-                <!-- Event 2 -->
-                <div class="event-item" style="border-left-color: #official-navy;">
-                    <div class="event-date">
-                        <span class="day">12</span>
-                        <span class="month">MAY</span>
-                    </div>
-                    <div class="event-info">
-                        <h4>O.S.R KW컨벤션</h4>
-                        <p>14:00 | 세미나 랠리</p>
-                    </div>
-                    <div class="btn-cal-add" onclick="addToCalendar('O.S.R KW컨벤션', '20260512T140000', '20260512T180000', 'KW컨벤션', '오너 세미나 랠리')">➕</div>
-                </div>
-                <!-- Event 3 -->
-                <div class="event-item">
-                    <div class="event-date">
-                        <span class="day">21</span>
-                        <span class="month">MAY</span>
-                    </div>
-                    <div class="event-info">
-                        <h4>A.I 초급반 교육</h4>
-                        <p>16:00 | 본사 교육장</p>
-                    </div>
-                    <div class="btn-cal-add" onclick="addToCalendar('A.I 초급반 교육', '20260521T160000', '20260521T200000', '본사', 'AI 기초 활용 능력 배양')">➕</div>
-                </div>
-                <!-- Event 4 -->
-                <div class="event-item" style="border-left-color: #1a1a5e;">
-                    <div class="event-date">
-                        <span class="day">23</span>
-                        <span class="month">MAY</span>
-                    </div>
-                    <div class="event-info">
-                        <h4>A.I 중급 교육</h4>
-                        <p>13:00 | 유여름 마스터</p>
-                    </div>
-                    <div class="btn-cal-add" onclick="addToCalendar('A.I 중급 교육', '20260523T130000', '20260523T180000', '줌(Zoom)', 'AI 중급 실전 전략')">➕</div>
+                <div class="carousel-nav" id="carouselDots">
+                    <!-- Dots will be injected by JavaScript -->
                 </div>
             </div>
         </section>
@@ -818,7 +767,96 @@
             alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
         });
 
-        // 일정표 모달 제어
+        // --- Schedule Data ---
+        const scheduleData = [
+            {
+                weekTitle: "5월 2주차 (5/4 ~ 5/10)",
+                events: [
+                    { day: "04", title: "줌 방송(스킨케어) & 천안OM", time: "11:00 / 14:00", loc: "줌/천안", desc: "주간 줌방송 및 천안 미팅" },
+                    { day: "05", title: "전국 OM (부산/서산/남원/창원)", time: "14:00 / 19:00", loc: "각 지역", desc: "어린이날 특별 미팅" },
+                    { day: "07", title: "리버스 마스터 & 본사 교육", time: "10:00 / 13:00", loc: "본사", desc: "제품 및 사업소개" },
+                    { day: "09", title: "A.I 중급 줌교육 (유여름)", time: "09:00~12:00", loc: "Zoom", desc: "AI 중급 실전 전략" }
+                ]
+            },
+            {
+                weekTitle: "5월 3주차 (5/11 ~ 5/17)",
+                events: [
+                    { day: "11", title: "줌 방송(파이오니) & 천안OM", time: "11:00 / 14:00", loc: "줌/천안", desc: "주간 줌방송 및 천안 미팅" },
+                    { day: "12", title: "O.S.R KW컨벤션 랠리", time: "14:00", loc: "KW컨벤션", desc: "오너 세미나 랠리" },
+                    { day: "13", title: "광주 OM (김은정 리더)", time: "14:00", loc: "광주", desc: "광주 지역 미팅" },
+                    { day: "15", title: "대구 OM (김은정 리더)", time: "14:00", loc: "대구", desc: "대구 지역 미팅" }
+                ]
+            },
+            {
+                weekTitle: "5월 4주차 (5/18 ~ 5/24)",
+                events: [
+                    { day: "18", title: "줌 방송(M&M) & 천안/제주OM", time: "11:00 / 14:00", loc: "전국", desc: "주간 줌방송" },
+                    { day: "20", title: "호남 리버스 마스터", time: "10:00~16:00", loc: "호남", desc: "마스터 교육 과정" },
+                    { day: "21", title: "본사 교육 & A.I 초급반", time: "13:00 / 16:00", loc: "본사", desc: "AI 기초 교육" },
+                    { day: "23", title: "A.I 중급 교육 (유여름)", time: "13:00~18:00", loc: "미정", desc: "AI 중급 실전 교육" }
+                ]
+            },
+            {
+                weekTitle: "5월 5주차 (5/25 ~ 5/31)",
+                events: [
+                    { day: "26", title: "전국 OM (부산/서산/남원/창원)", time: "14:00 / 19:00", loc: "각 지역", desc: "화요 정기 미팅" },
+                    { day: "27", title: "광주 OM (김은정 리더)", time: "14:00", loc: "광주", desc: "광주 지역 미팅" },
+                    { day: "28", title: "본사 사업소개 & 생활용품", time: "13:00", loc: "본사", desc: "본사 정기 교육" }
+                ]
+            }
+        ];
+
+        // --- Render Schedule ---
+        const carousel = document.getElementById('scheduleCarousel');
+        const dotsContainer = document.getElementById('carouselDots');
+
+        scheduleData.forEach((week, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'week-slide';
+            
+            let eventsHtml = week.events.map(e => `
+                <div class="event-item">
+                    <div class="event-date">
+                        <span class="day">${e.day}</span>
+                        <span class="month">MAY</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>${e.title}</h4>
+                        <p>${e.time} | ${e.loc}</p>
+                    </div>
+                    <div class="btn-cal-add" onclick="addToCalendar('${e.title}', '202605${e.day}T100000', '202605${e.day}T180000', '${e.loc}', '${e.desc}')">➕</div>
+                </div>
+            `).join('');
+
+            slide.innerHTML = `
+                <div class="week-title">${week.weekTitle}</div>
+                <div class="event-list">${eventsHtml}</div>
+            `;
+            carousel.appendChild(slide);
+
+            const dot = document.createElement('div');
+            dot.className = `dot ${index === 0 ? 'active' : ''}`;
+            dotsContainer.appendChild(dot);
+        });
+
+        // --- Scroll Event for Dots ---
+        carousel.addEventListener('scroll', () => {
+            const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        });
+
+        // --- Initial Scroll to Current Week ---
+        // 5월 4일 기준이므로 0번째 인덱스(2주차)가 기본
+        carousel.scrollLeft = 0;
+
+        // --- Modals & Other ---
+        document.querySelector('.btn-prompt').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
+        });
+
         const calModal = document.getElementById('calModal');
         const openCalImg = document.getElementById('openCalImg');
         const closeCalImg = document.getElementById('closeCalImg');
@@ -831,7 +869,6 @@
             calModal.style.display = 'none';
         });
 
-        // 구글 캘린더 추가 함수
         function addToCalendar(title, start, end, loc, desc) {
             const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
             const url = `${baseUrl}&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
@@ -839,7 +876,6 @@
         }
     </script>
 
-    <!-- Schedule Modal -->
     <div class="img-modal" id="calModal">
         <img src="owner_schedule_may.png" alt="5월 일정표 전체보기">
         <div class="btn-modal-close" id="closeCalImg">닫기</div>
