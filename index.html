@@ -730,48 +730,60 @@
         const pwInput = document.getElementById('pwInput');
         const verifyBtn = document.getElementById('verifyBtn');
 
-        const CORRECT_PW = "owner777";
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJxjgXm4-mOhO28LfauqISFgeU1Q-nCDw8ngRru53dSMImaV8bzRlQ81YCF9JEzKM9/exec';
+        const CORRECT_PW = "owner777"; // 마스터 키 (여름님이 원하시는 대로 변경 가능)
 
-        // --- Authentication ---
+        // 인증 상태 체크 (한 번 성공하면 다시 묻지 않음)
         function checkAuth() {
             return localStorage.getItem('owner_authorized') === 'true';
         }
 
+        // 메뉴 클릭 시 인증 절차
         document.querySelectorAll('.menu-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                if (card.getAttribute('href') === '#resource') return;
                 e.preventDefault();
+                
                 if (checkAuth()) {
-                    alert('성공적으로 인증되었습니다. 해당 서비스로 연결됩니다.');
+                    // 이미 인증된 경우 자료실로 바로 이동
+                    alert('성공적으로 인증되었습니다. 자료실(구글 드라이브)로 연결됩니다.');
+                    // window.location.href = "여기에_구글_드라이브_링크_입력";
                 } else {
+                    // 인증되지 않은 경우 비밀번호 모달 표시
                     pwModal.style.display = 'flex';
                     pwInput.focus();
                 }
             });
         });
 
+        // 비밀번호 확인 로직
         verifyBtn.addEventListener('click', () => {
             if (pwInput.value === CORRECT_PW) {
                 localStorage.setItem('owner_authorized', 'true');
                 pwModal.style.display = 'none';
-                alert('환영합니다, 리더님!');
+                alert('환영합니다, 리더님! 인증에 성공하였습니다.');
             } else {
-                alert('비밀번호가 일치하지 않습니다.');
+                alert('비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
                 pwInput.value = '';
+                pwInput.focus();
             }
         });
 
-        pwInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyBtn.click(); });
-
-        // --- Chat Logic ---
-        chatFab.addEventListener('click', () => {
-            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
-            if (chatWindow.style.display === 'flex') chatInput.focus();
+        // 엔터키 지원
+        pwInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyBtn.click();
         });
 
-        closeChat.addEventListener('click', () => { chatWindow.style.display = 'none'; });
+        // 채팅창 토글
+        chatFab.addEventListener('click', () => {
+            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+        });
 
+        closeChat.addEventListener('click', () => {
+            chatWindow.style.display = 'none';
+        });
+
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbyMPsemCtNSmQmo3S7GPYkEqwpvIXPP1x20tl7K_dx3A3Nia9MBDfZ744IJeaJuuZVc/exec';
+
+        // 메시지 전송 함수
         async function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
@@ -792,18 +804,15 @@
             chatBody.scrollTop = chatBody.scrollHeight;
 
             try {
-                // 실시간 GAS 연동 (no-cors 모드)
-                await fetch(GAS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text, userId: 'user_' + Date.now() })
-                });
+                // GET 방식으로 전환하여 실제 AI 답변을 읽어옵니다.
+                const response = await fetch(`${GAS_URL}?message=${encodeURIComponent(text)}&userId=user_${Date.now()}`);
+                const result = await response.json();
                 
-                setTimeout(() => {
-                    aiDiv.innerHTML = "리더님, 질문 주셔서 감사합니다! ✨ 현재 AI 엔진이 리더님의 질문을 분석하여 로그 시트에 답변을 준비하고 있습니다. (실시간 응답 본문 출력은 보안 설정 업데이트 후 지원될 예정입니다)";
-                }, 1500);
+                if (result.status === 'success') {
+                    aiDiv.innerText = result.reply; // 진짜 AI 답변 출력
+                } else {
+                    aiDiv.innerText = "리더님, 답변을 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+                }
             } catch (err) {
                 aiDiv.innerText = "죄송합니다, 잠시 연결이 원활하지 않습니다. 🙏";
             }
@@ -811,15 +820,241 @@
 
         sendBtn.addEventListener('click', sendMessage);
         chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
-    </script>
-    <style>
-        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
-        @keyframes dots {
-            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
-            40% { color: #e5b2a4; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
-            60% { text-shadow: .25em 0 0 #e5b2a4, .5em 0 0 rgba(0,0,0,0); }
-            80%, 100% { text-shadow: .25em 0 0 #e5b2a4, .5em 0 0 #e5b2a4; }
+
+
+        document.querySelector('.btn-prompt').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
+        });
+
+        // --- Render Schedule Function ---
+        function renderSchedule(data) {
+            const carousel = document.getElementById('scheduleCarousel');
+            const dotsContainer = document.getElementById('carouselDots');
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            data.forEach((week, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'week-slide';
+                
+                let eventsHtml = week.events.map(e => `
+                    <div class="event-item">
+                        <div class="event-date">
+                            <span class="day">${e.day}</span>
+                            <span class="month">MAY</span>
+                        </div>
+                        <div class="event-info">
+                            <h4>${e.title}</h4>
+                            <p>${e.time} | ${e.loc}</p>
+                        </div>
+                        <div class="btn-cal-add" onclick="addToCalendar('${e.title}', '202605${e.day}T100000', '202605${e.day}T180000', '${e.loc}', '${e.desc}')">➕</div>
+                    </div>
+                `).join('');
+
+                slide.innerHTML = `
+                    <div class="week-header">
+                        <div class="week-title">${week.weekTitle}</div>
+                        <div class="add-label">📅 일정 추가</div>
+                    </div>
+                    <div class="event-list">${eventsHtml}</div>
+                `;
+                carousel.appendChild(slide);
+
+                const dot = document.createElement('div');
+                dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                dotsContainer.appendChild(dot);
+            });
+
+            carousel.addEventListener('scroll', () => {
+                const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+                document.querySelectorAll('.dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            });
+            carousel.scrollLeft = 0;
         }
-    </style>
+
+        // --- Load Data from CSV ---
+        async function loadSchedule() {
+            const fallbackCsv = `Week,Day,Title,Time,Location,Description
+2,04,줌 방송(스킨케어) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
+2,05,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,어린이날 특별 미팅
+2,07,리버스 마스터 & 본사 교육,10:00 / 13:00,본사,제품 및 사업소개
+2,09,A.I 중급 줌교육 (유여름),09:00~12:00,Zoom,AI 중급 실전 전략
+3,11,줌 방송(파이오니) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
+3,12,O.S.R KW컨벤션 랠리,14:00,KW컨벤션,오너 세미나 랠리
+3,13,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
+3,15,대구 OM (김은정 리더),14:00,대구,대구 지역 미팅
+4,18,줌 방송(M&M) & 천안/제주OM,11:00 / 14:00,전국,주간 줌방송
+4,20,호남 리버스 마스터,10:00~16:00,호남,마스터 교육 과정
+4,21,본사 교육 & A.I 초급반,13:00 / 16:00,본사,AI 기초 교육
+4,23,A.I 중급 교육 (유여름),13:00~18:00,미정,AI 중급 실전 교육
+5,26,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,화요 정기 미팅
+5,27,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
+5,28,본사 사업소개 & 생활용품,13:00,본사,본사 정기 교육`;
+
+            try {
+                const response = await fetch('data/schedule.csv');
+                if (!response.ok) throw new Error('Fetch failed');
+                const text = await response.text();
+                parseAndRender(text);
+            } catch (err) {
+                console.warn('Local file or Fetch error, using fallback data:', err);
+                parseAndRender(fallbackCsv);
+            }
+        }
+
+        function parseAndRender(csvText) {
+            const rows = csvText.split('\n').filter(r => r.trim() && !r.startsWith('Week'));
+            const groupedData = {};
+            
+            rows.forEach(row => {
+                const [week, day, title, time, loc, desc] = row.split(',');
+                const weekKey = `${week}주차`;
+                if (!groupedData[weekKey]) {
+                    groupedData[weekKey] = { weekTitle: `5월 ${week}주차`, events: [] };
+                }
+                groupedData[weekKey].events.push({ day, title, time, loc, desc });
+            });
+
+            renderSchedule(Object.values(groupedData));
+        }
+
+        // --- Resources Load from CSV ---
+        async function loadResources() {
+            try {
+                const response = await fetch('data/resources.csv');
+                if (!response.ok) throw new Error('Fetch failed');
+                const text = await response.text();
+                const rows = text.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
+                
+                const groupedData = {};
+                rows.forEach(row => {
+                    const [cat, title, format, size, filename] = row.split(',');
+                    if (!groupedData[cat]) {
+                        groupedData[cat] = { catTitle: cat, items: [] };
+                    }
+                    groupedData[cat].items.push({ title, format, size, filename });
+                });
+
+                renderResources(Object.values(groupedData));
+            } catch (err) {
+                console.warn('Resource Load Error:', err);
+            }
+        }
+
+        function renderResources(data) {
+            const carousel = document.getElementById('resourceCarousel');
+            const dotsContainer = document.getElementById('resourceDots');
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            data.forEach((cat, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'week-slide';
+                
+                let itemsHtml = cat.items.map(item => `
+                    <div class="event-item">
+                        <div class="event-date" style="background: #eef2f3; color: #555;">
+                            <span class="day" style="font-size: 10px;">${item.format}</span>
+                            <span class="month" style="font-size: 8px;">FILE</span>
+                        </div>
+                        <div class="event-info">
+                            <h4>${item.title}</h4>
+                            <p>${item.size} | ${item.format}</p>
+                        </div>
+                        <a href="${item.filename}" target="_blank" class="btn-cal-add" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: none; color: var(--text-dim); box-shadow: none; font-size: 20px;">↓</a>
+                    </div>
+                `).join('');
+                
+                slide.innerHTML = `
+                    <div class="week-header">
+                        <div class="week-title" style="background: #eef2f3; color: #555;">${cat.catTitle}</div>
+                        <div class="add-label" style="background: #f0f7ff; color: #5a91d4;">📥 미리보기 후 저장</div>
+                    </div>
+                    <div class="event-list">${itemsHtml}</div>
+                `;
+                carousel.appendChild(slide);
+
+                const dot = document.createElement('div');
+                dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                dotsContainer.appendChild(dot);
+            });
+
+            carousel.addEventListener('scroll', () => {
+                const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+                document.querySelectorAll('#resourceDots .dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            });
+        }
+
+        // --- View Controller (Enhanced Routing) ---
+        function showView(viewId) {
+            const homeView = document.getElementById('homeView');
+            const resourceView = document.getElementById('resourceView');
+            if (!homeView || !resourceView) return;
+
+            if (viewId === 'resource') {
+                homeView.style.display = 'none';
+                resourceView.style.display = 'block';
+                location.hash = 'resource';
+            } else {
+                homeView.style.display = 'block';
+                resourceView.style.display = 'none';
+                location.hash = '';
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function handleRouting() {
+            const hash = window.location.hash;
+            if (hash === '#resource') {
+                showView('resource');
+            } else {
+                showView('home');
+            }
+        }
+
+        window.addEventListener('hashchange', handleRouting);
+
+        // 초기 실행 (데이터 로드와 UI 전환 분리)
+        window.addEventListener('DOMContentLoaded', () => {
+            handleRouting();
+            loadSchedule();
+            loadResources();
+        });
+
+        // --- Modals & Other ---
+        document.querySelector('.btn-prompt').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
+        });
+
+        const calModal = document.getElementById('calModal');
+        const openCalImg = document.getElementById('openCalImg');
+        const closeCalImg = document.getElementById('closeCalImg');
+
+        openCalImg.addEventListener('click', () => {
+            calModal.style.display = 'flex';
+        });
+
+        closeCalImg.addEventListener('click', () => {
+            calModal.style.display = 'none';
+        });
+
+        function addToCalendar(title, start, end, loc, desc) {
+            const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
+            const url = `${baseUrl}&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
+            window.open(url, '_blank');
+        }
+    </script>
+
+
+    <div class="img-modal" id="calModal">
+        <img src="owner_schedule_may.png" alt="5월 일정표 전체보기">
+        <div class="btn-modal-close" id="closeCalImg">닫기</div>
+    </div>
 </body>
 </html>
