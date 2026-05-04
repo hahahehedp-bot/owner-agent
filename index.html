@@ -617,7 +617,7 @@
         <!-- Home View -->
         <div id="homeView">
             <nav class="menu-grid">
-                <a href="#resource" class="menu-card animate delay-1">
+                <a href="#resource" class="menu-card animate delay-1" onclick="showView('resource')">
                     <div class="icon-box">✨</div>
                     <div class="menu-info">
                         <h2>제품 자료실</h2>
@@ -662,7 +662,7 @@
         <!-- Resource View (Hidden by default) -->
         <div id="resourceView" style="display: none;">
             <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                <a href="#" style="text-decoration: none; background: var(--official-navy); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer;">← 뒤로가기</a>
+                <a href="#" class="btn-back" onclick="showView('home')" style="text-decoration: none; background: var(--official-navy); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer;">← 뒤로가기</a>
             </div>
             <section class="schedule-section" style="margin-top: 0;">
                 <div class="schedule-header">
@@ -975,29 +975,41 @@
             });
         }
 
-        // --- View Controller (Hash Routing) ---
-        function handleRouting() {
-            const hash = window.location.hash;
+        // --- View Controller (Enhanced Routing) ---
+        function showView(viewId) {
             const homeView = document.getElementById('homeView');
             const resourceView = document.getElementById('resourceView');
-            
-            if (hash === '#resource') {
+            if (!homeView || !resourceView) return;
+
+            if (viewId === 'resource') {
                 homeView.style.display = 'none';
                 resourceView.style.display = 'block';
-                window.scrollTo(0, 0);
+                location.hash = 'resource';
             } else {
                 homeView.style.display = 'block';
                 resourceView.style.display = 'none';
-                window.scrollTo(0, 0);
+                location.hash = '';
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function handleRouting() {
+            const hash = window.location.hash;
+            if (hash === '#resource') {
+                showView('resource');
+            } else {
+                showView('home');
             }
         }
 
         window.addEventListener('hashchange', handleRouting);
 
-        // 초기 실행
-        loadSchedule();
-        loadResources();
-        handleRouting(); // 현재 해시에 맞는 뷰 표시
+        // 초기 실행 (데이터 로드와 UI 전환 분리)
+        window.addEventListener('DOMContentLoaded', () => {
+            handleRouting();
+            loadSchedule();
+            loadResources();
+        });
 
         // --- Modals & Other ---
         document.querySelector('.btn-prompt').addEventListener('click', (e) => {
