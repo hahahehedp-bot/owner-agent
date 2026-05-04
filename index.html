@@ -1100,7 +1100,13 @@
 
             try {
                 // 실시간 GAS API를 통해 G: 드라이브 schedule.csv 직접 읽기
-                const response = await fetch(`${GAS_URL}?action=getFileContent&fileName=schedule.csv&v=${new Date().getTime()}`);
+                // GAS URL에 파라미터가 중복되지 않도록 깔끔하게 구성
+                const url = new URL(GAS_URL);
+                url.searchParams.append('action', 'getFileContent');
+                url.searchParams.append('fileName', 'schedule.csv');
+                url.searchParams.append('v', new Date().getTime());
+
+                const response = await fetch(url.toString());
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
                 
@@ -1135,7 +1141,12 @@
         async function loadResources() {
             try {
                 // 실시간 GAS API를 통해 G: 드라이브 resources.csv 직접 읽기
-                const response = await fetch(`${GAS_URL}?action=getFileContent&fileName=resources.csv&v=${new Date().getTime()}`);
+                const url = new URL(GAS_URL);
+                url.searchParams.append('action', 'getFileContent');
+                url.searchParams.append('fileName', 'resources.csv');
+                url.searchParams.append('v', new Date().getTime());
+
+                const response = await fetch(url.toString());
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
 
@@ -1288,7 +1299,12 @@
 
             try {
                 // 실시간 GAS API 호출 (G: 드라이브 '팝업' 폴더 스캔)
-                const response = await fetch(`${GAS_URL}?action=getFolderFiles&folderName=팝업&v=${new Date().getTime()}`);
+                const url = new URL(GAS_URL);
+                url.searchParams.append('action', 'getFolderFiles');
+                url.searchParams.append('folderName', '팝업');
+                url.searchParams.append('v', new Date().getTime());
+
+                const response = await fetch(url.toString());
                 if (!response.ok) {
                     console.warn('Osuny Popup: GAS API error.');
                     return;

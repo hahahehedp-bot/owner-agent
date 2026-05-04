@@ -18,26 +18,26 @@ function doGet(e) {
   try {
     const action = e.parameter.action;
     
-    // 실시간 폴더 스캔 기능 (팝업, 일정 등)
+    // 1. 실시간 폴더 스캔 (이미지 목록)
     if (action === 'getFolderFiles') {
-      const folderName = e.parameter.folderName;
-      return getFolderFiles(folderName);
+      return getFolderFiles(e.parameter.folderName);
     }
 
-    // 실시간 파일 내용 읽기 (CSV 등)
+    // 2. 실시간 파일 읽기 (CSV 등)
     if (action === 'getFileContent') {
-      const fileName = e.parameter.fileName;
-      return getFileContent(fileName);
+      return getFileContent(e.parameter.fileName);
     }
 
+    // 3. 기본 채팅 로직
     const userMessage = e.parameter.message;
-    const userId = e.parameter.userId || 'guest';
-    
-    if (!userMessage) return createJsonResponse({ status: 'error', message: 'No message provided' });
+    if (userMessage) {
+      const aiResponse = handleChat(userMessage, e.parameter.userId || 'guest');
+      return createJsonResponse({ status: 'success', reply: aiResponse });
+    }
 
-    const aiResponse = handleChat(userMessage, userId);
-    
-    return createJsonResponse({ status: 'success', reply: aiResponse });
+    // 아무 파라미터도 없을 때만 상태 보고 (이게 일정표에 뜨면 안 됨!)
+    return createJsonResponse({ status: 'success', message: 'Osuny Engine is Running' });
+
   } catch (error) {
     return createJsonResponse({ status: 'error', message: error.toString() });
   }
