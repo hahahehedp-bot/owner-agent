@@ -667,7 +667,7 @@
             <section class="schedule-section" style="margin-top: 0;">
                 <div class="schedule-header">
                     <h3>📂 제품 자료실</h3>
-                    <span class="add-label">📥 자료 다운로드</span>
+                    <span class="add-label">📥 탭하여 열기 (공유-저장)</span>
                 </div>
                 <div class="carousel-container">
                     <div class="carousel-track" id="resourceCarousel">
@@ -949,14 +949,14 @@
                             <h4>${item.title}</h4>
                             <p>${item.size} | ${item.format}</p>
                         </div>
-                        <a href="${item.filename}" download class="btn-cal-add" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: none; color: var(--text-dim); box-shadow: none; font-size: 20px;">↓</a>
+                        <a href="${item.filename}" target="_blank" class="btn-cal-add" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: none; color: var(--text-dim); box-shadow: none; font-size: 20px;">↓</a>
                     </div>
                 `).join('');
-
+                
                 slide.innerHTML = `
                     <div class="week-header">
                         <div class="week-title" style="background: #eef2f3; color: #555;">${cat.catTitle}</div>
-                        <div class="add-label" style="background: #f0f7ff; color: #5a91d4;">📥 탭하여 저장</div>
+                        <div class="add-label" style="background: #f0f7ff; color: #5a91d4;">📥 미리보기 후 저장</div>
                     </div>
                     <div class="event-list">${itemsHtml}</div>
                 `;
