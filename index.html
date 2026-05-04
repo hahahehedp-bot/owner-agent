@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>오순이</title>
+    <title>오순이 (Osuny)</title>
     
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json?v=1.0.2">
     <link rel="icon" type="image/png" href="osunyi_logo.png?v=1.0.2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="오순이">
+    <meta name="apple-mobile-web-app-title" content="Osuny">
     <meta name="theme-color" content="#fdf5f2">
  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -771,10 +771,10 @@
         <header>
             <div class="logo-wrapper">
                 <div class="official-logo-mark" style="border:none; overflow: hidden; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 75px; height: 75px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-                    <img src="osunyi_logo.png" alt="오순이 캐릭터" style="height: 100px; width: auto; object-fit: contain;">
+                    <img src="osuny_logo.png" alt="오순이 캐릭터" style="height: 100px; width: auto; object-fit: contain;">
                 </div>
                 <div class="logo-text-group" style="height: 60px; width: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-left: -10px;">
-                    <img src="osunyi_text.png" alt="오순이 이름" style="height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-top: 2px;">
+                    <img src="osuny_text.png" alt="오순이 이름" style="height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-top: 2px;">
                 </div>
             </div>
         </header>
@@ -1099,7 +1099,7 @@
 5,28,본사 사업소개 & 생활용품,13:00,본사,본사 정기 교육`;
 
             try {
-                const response = await fetch('data/schedule.csv');
+                const response = await fetch('osuny/data/schedule.csv');
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
                 parseAndRender(text);
@@ -1128,7 +1128,7 @@
         // --- Resources Load from CSV ---
         async function loadResources() {
             try {
-                const response = await fetch('data/resources.csv');
+                const response = await fetch('osuny/data/resources.csv');
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
                 const rows = text.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
@@ -1275,7 +1275,7 @@
 
             try {
                 // 캐시 무력화를 위해 타임스탬프 추가
-                const response = await fetch('data/popups.json?v=' + new Date().getTime());
+                const response = await fetch('osuny/data/popups.json?v=' + new Date().getTime());
                 if (!response.ok) {
                     console.warn('Osunyi Popup: JSON not found.');
                     return;
