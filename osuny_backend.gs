@@ -76,10 +76,15 @@ function getFileContent(fileName) {
   if (!rootFolders.hasNext()) return ContentService.createTextOutput("Error: Root folder not found");
   
   const osunyFolder = rootFolders.next();
-  // data 폴더 안의 파일 찾기
-  const dataFolders = osunyFolder.getFoldersByName('data');
+  
+  // 파일 성격에 따라 폴더 매핑 (한글 원위치 대응)
+  let targetFolderName = '데이터';
+  if (fileName.includes('schedule')) targetFolderName = '일정';
+  if (fileName.includes('resources')) targetFolderName = '자료실';
+
+  const targetFolders = osunyFolder.getFoldersByName(targetFolderName);
   let searchFolder = osunyFolder;
-  if (dataFolders.hasNext()) searchFolder = dataFolders.next();
+  if (targetFolders.hasNext()) searchFolder = targetFolders.next();
 
   const files = searchFolder.getFilesByName(fileName);
   if (!files.hasNext()) return ContentService.createTextOutput("Error: File not found");

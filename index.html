@@ -1276,8 +1276,8 @@
             }
 
             try {
-                // 실시간 GAS API 호출 (G: 드라이브 popup 폴더 스캔)
-                const response = await fetch(`${GAS_URL}?action=getFolderFiles&folderName=popup&v=${new Date().getTime()}`);
+                // 실시간 GAS API 호출 (G: 드라이브 '팝업' 폴더 스캔)
+                const response = await fetch(`${GAS_URL}?action=getFolderFiles&folderName=팝업&v=${new Date().getTime()}`);
                 if (!response.ok) {
                     console.warn('Osuny Popup: GAS API error.');
                     return;
