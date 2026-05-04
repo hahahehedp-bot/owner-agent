@@ -1114,8 +1114,12 @@
             const hash = window.location.hash;
             if (hash === '#resource') {
                 showView('resource');
+                toggleChat(false); // 채팅창 닫기
+            } else if (hash === '#chat') {
+                toggleChat(true); // 채팅창 열기
             } else {
                 showView('home');
+                toggleChat(false); // 채팅창 닫기
             }
         }
 
@@ -1126,6 +1130,12 @@
             handleRouting();
             loadSchedule();
             loadResources();
+            
+            // 첫 인사말 마크다운 적용
+            const initialMsg = document.querySelector('.msg.ai');
+            if (initialMsg && typeof marked !== 'undefined') {
+                initialMsg.innerHTML = marked.parse(initialMsg.innerText);
+            }
         });
 
         // --- Modals & Other ---
