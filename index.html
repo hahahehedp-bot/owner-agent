@@ -730,459 +730,69 @@
         const pwInput = document.getElementById('pwInput');
         const verifyBtn = document.getElementById('verifyBtn');
 
-        const CORRECT_PW = "owner777"; // 마스터 키 (여름님이 원하시는 대로 변경 가능)
+        const CORRECT_PW = "owner777";
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJxjgXm4-mOhO28LfauqISFgeU1Q-nCDw8ngRru53dSMImaV8bzRlQ81YCF9JEzKM9/exec';
 
-        // 인증 상태 체크 (한 번 성공하면 다시 묻지 않음)
+        // --- Authentication ---
         function checkAuth() {
             return localStorage.getItem('owner_authorized') === 'true';
         }
 
-        // 메뉴 클릭 시 인증 절차
         document.querySelectorAll('.menu-card').forEach(card => {
             card.addEventListener('click', (e) => {
+                if (card.getAttribute('href') === '#resource') return;
                 e.preventDefault();
-                
                 if (checkAuth()) {
-                    // 이미 인증된 경우 자료실로 바로 이동
-                    alert('성공적으로 인증되었습니다. 자료실(구글 드라이브)로 연결됩니다.');
-                    // window.location.href = "여기에_구글_드라이브_링크_입력";
+                    alert('성공적으로 인증되었습니다. 해당 서비스로 연결됩니다.');
                 } else {
-                    // 인증되지 않은 경우 비밀번호 모달 표시
                     pwModal.style.display = 'flex';
                     pwInput.focus();
                 }
             });
         });
 
-        // 비밀번호 확인 로직
         verifyBtn.addEventListener('click', () => {
             if (pwInput.value === CORRECT_PW) {
                 localStorage.setItem('owner_authorized', 'true');
                 pwModal.style.display = 'none';
-                alert('환영합니다, 리더님! 인증에 성공하였습니다.');
+                alert('환영합니다, 리더님!');
             } else {
-                alert('비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
+                alert('비밀번호가 일치하지 않습니다.');
                 pwInput.value = '';
-                pwInput.focus();
             }
         });
 
-        // 엔터키 지원
-        pwInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verifyBtn.click();
-        });
+        pwInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyBtn.click(); });
 
-        // 채팅창 토글
+        // --- Chat Logic ---
         chatFab.addEventListener('click', () => {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+            if (chatWindow.style.display === 'flex') chatInput.focus();
         });
 
-        closeChat.addEventListener('click', () => {
-            chatWindow.style.display = 'none';
-        });
+        closeChat.addEventListener('click', () => { chatWindow.style.display = 'none'; });
 
-        // 메시지 전송 함수
-        function sendMessage() {
+        async function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
 
-            const userMsg = document.createElement('div');
-            userMsg.className = 'msg user';
-            userMsg.innerText = text;
-            chatBody.appendChild(userMsg);
+            // User Message
+            const uDiv = document.createElement('div');
+            uDiv.className = 'msg user';
+            uDiv.innerText = text;
+            chatBody.appendChild(uDiv);
             chatInput.value = '';
             chatBody.scrollTop = chatBody.scrollHeight;
 
-            setTimeout(() => {
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'msg ai';
-                aiMsg.innerText = `대표님의 '${text}'에 대한 고민을 확인했습니다. 오너 마스터의 노하우로 최적의 답변을 생성 중입니다... (실제 AI 연결 시 실시간 답변이 출력됩니다)`;
-                chatBody.appendChild(aiMsg);
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 1000);
-        }
-
-        sendBtn.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        document.querySelector('.btn-prompt').addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
-        });
-
-        // --- Render Schedule Function ---
-        function renderSchedule(data) {
-            const carousel = document.getElementById('scheduleCarousel');
-            const dotsContainer = document.getElementById('carouselDots');
-            carousel.innerHTML = '';
-            dotsContainer.innerHTML = '';
-
-            data.forEach((week, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'week-slide';
-                
-                let eventsHtml = week.events.map(e => `
-                    <div class="event-item">
-                        <div class="event-date">
-                            <span class="day">${e.day}</span>
-                            <span class="month">MAY</span>
-                        </div>
-                        <div class="event-info">
-                            <h4>${e.title}</h4>
-                            <p>${e.time} | ${e.loc}</p>
-                        </div>
-                        <div class="btn-cal-add" onclick="addToCalendar('${e.title}', '202605${e.day}T100000', '202605${e.day}T180000', '${e.loc}', '${e.desc}')">➕</div>
-                    </div>
-                `).join('');
-
-                slide.innerHTML = `
-                    <div class="week-header">
-                        <div class="week-title">${week.weekTitle}</div>
-                        <div class="add-label">📅 일정 추가</div>
-                    </div>
-                    <div class="event-list">${eventsHtml}</div>
-                `;
-                carousel.appendChild(slide);
-
-                const dot = document.createElement('div');
-                dot.className = `dot ${index === 0 ? 'active' : ''}`;
-                dotsContainer.appendChild(dot);
-            });
-
-            carousel.addEventListener('scroll', () => {
-                const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
-                document.querySelectorAll('.dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-            });
-            carousel.scrollLeft = 0;
-        }
-
-        // --- Load Data from CSV ---
-        async function loadSchedule() {
-            const fallbackCsv = `Week,Day,Title,Time,Location,Description
-2,04,줌 방송(스킨케어) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
-2,05,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,어린이날 특별 미팅
-2,07,리버스 마스터 & 본사 교육,10:00 / 13:00,본사,제품 및 사업소개
-2,09,A.I 중급 줌교육 (유여름),09:00~12:00,Zoom,AI 중급 실전 전략
-3,11,줌 방송(파이오니) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
-3,12,O.S.R KW컨벤션 랠리,14:00,KW컨벤션,오너 세미나 랠리
-3,13,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
-3,15,대구 OM (김은정 리더),14:00,대구,대구 지역 미팅
-4,18,줌 방송(M&M) & 천안/제주OM,11:00 / 14:00,전국,주간 줌방송
-4,20,호남 리버스 마스터,10:00~16:00,호남,마스터 교육 과정
-4,21,본사 교육 & A.I 초급반,13:00 / 16:00,본사,AI 기초 교육
-4,23,A.I 중급 교육 (유여름),13:00~18:00,미정,AI 중급 실전 교육
-5,26,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,화요 정기 미팅
-5,27,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
-5,28,본사 사업소개 & 생활용품,13:00,본사,본사 정기 교육`;
+            // Loading AI
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'msg ai';
+            aiDiv.innerHTML = '<span class="loading-dots">오순이가 생각 중입니다...</span>';
+            chatBody.appendChild(aiDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
 
             try {
-                const response = await fetch('data/schedule.csv');
-                if (!response.ok) throw new Error('Fetch failed');
-                const text = await response.text();
-                parseAndRender(text);
-            } catch (err) {
-                console.warn('Local file or Fetch error, using fallback data:', err);
-                parseAndRender(fallbackCsv);
-            }
-        }
-
-        function parseAndRender(csvText) {
-            const rows = csvText.split('\n').filter(r => r.trim() && !r.startsWith('Week'));
-            const groupedData = {};
-            
-            rows.forEach(row => {
-                const [week, day, title, time, loc, desc] = row.split(',');
-                const weekKey = `${week}주차`;
-                if (!groupedData[weekKey]) {
-                    groupedData[weekKey] = { weekTitle: `5월 ${week}주차`, events: [] };
-                }
-                groupedData[weekKey].events.push({ day, title, time, loc, desc });
-            });
-
-            renderSchedule(Object.values(groupedData));
-        }
-
-        // --- Resources Load from CSV ---
-        async function loadResources() {
-            try {
-                const response = await fetch('data/resources.csv');
-                if (!response.ok) throw new Error('Fetch failed');
-                const text = await response.text();
-                const rows = text.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
-                
-                const groupedData = {};
-                rows.forEach(row => {
-                    const [cat, title, format, size, filename] = row.split(',');
-                    if (!groupedData[cat]) {
-                        groupedData[cat] = { catTitle: cat, items: [] };
-                    }
-                    groupedData[cat].items.push({ title, format, size, filename });
-                });
-
-                renderResources(Object.values(groupedData));
-            } catch (err) {
-                console.warn('Resource Load Error:', err);
-            }
-        }
-
-        function renderResources(data) {
-            const carousel = document.getElementById('resourceCarousel');
-            const dotsContainer = document.getElementById('resourceDots');
-            carousel.innerHTML = '';
-            dotsContainer.innerHTML = '';
-
-            data.forEach((cat, index) => {
-                const slide = document.createElement('div');
-                slide.className = 'week-slide';
-                
-                let itemsHtml = cat.items.map(item => `
-                    <div class="event-item">
-                        <div class="event-date" style="background: #eef2f3; color: #555;">
-                            <span class="day" style="font-size: 10px;">${item.format}</span>
-                            <span class="month" style="font-size: 8px;">FILE</span>
-                        </div>
-                        <div class="event-info">
-                            <h4>${item.title}</h4>
-                            <p>${item.size} | ${item.format}</p>
-                        </div>
-                        <a href="${item.filename}" target="_blank" class="btn-cal-add" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: none; color: var(--text-dim); box-shadow: none; font-size: 20px;">↓</a>
-                    </div>
-                `).join('');
-                
-                slide.innerHTML = `
-                    <div class="week-header">
-                        <div class="week-title" style="background: #eef2f3; color: #555;">${cat.catTitle}</div>
-                        <div class="add-label" style="background: #f0f7ff; color: #5a91d4;">📥 미리보기 후 저장</div>
-                    </div>
-                    <div class="event-list">${itemsHtml}</div>
-                `;
-                carousel.appendChild(slide);
-
-                const dot = document.createElement('div');
-                dot.className = `dot ${index === 0 ? 'active' : ''}`;
-                dotsContainer.appendChild(dot);
-            });
-
-            carousel.addEventListener('scroll', () => {
-                const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
-                document.querySelectorAll('#resourceDots .dot').forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-            });
-        }
-
-        // --- View Controller (Enhanced Routing) ---
-        function showView(viewId) {
-            const homeView = document.getElementById('homeView');
-            const resourceView = document.getElementById('resourceView');
-            if (!homeView || !resourceView) return;
-
-            if (viewId === 'resource') {
-                homeView.style.display = 'none';
-                resourceView.style.display = 'block';
-                location.hash = 'resource';
-            } else {
-                homeView.style.display = 'block';
-                resourceView.style.display = 'none';
-                location.hash = '';
-            }
-            window.scrollTo(0, 0);
-        }
-
-        function handleRouting() {
-            const hash = window.location.hash;
-            if (hash === '#resource') {
-                showView('resource');
-            } else {
-                showView('home');
-            }
-        }
-
-        window.addEventListener('hashchange', handleRouting);
-
-        // 초기 실행 (데이터 로드와 UI 전환 분리)
-        window.addEventListener('DOMContentLoaded', () => {
-            handleRouting();
-            loadSchedule();
-            loadResources();
-        });
-
-        // --- Modals & Other ---
-        document.querySelector('.btn-prompt').addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
-        });
-
-        const calModal = document.getElementById('calModal');
-        const openCalImg = document.getElementById('openCalImg');
-        const closeCalImg = document.getElementById('closeCalImg');
-
-        openCalImg.addEventListener('click', () => {
-            calModal.style.display = 'flex';
-        });
-
-        closeCalImg.addEventListener('click', () => {
-            calModal.style.display = 'none';
-        });
-
-        function addToCalendar(title, start, end, loc, desc) {
-            const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
-            const url = `${baseUrl}&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
-            window.open(url, '_blank');
-        }
-    </script>
-
-    <div class="img-modal" id="calModal">
-        <img src="owner_schedule_may.png" alt="5월 일정표 전체보기">
-        <div class="btn-modal-close" id="closeCalImg">닫기</div>
-    </div>
-    <!-- [오순이 챗봇 UI] -->
-    <style>
-        #osunyi-chat-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 65px;
-            height: 65px;
-            background: #e5b2a4; /* 로즈 핑크 */
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: white;
-            box-shadow: 0 10px 25px rgba(229, 178, 164, 0.5);
-            cursor: pointer;
-            z-index: 9999;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #osunyi-chat-btn:hover { transform: scale(1.1); }
-        
-        #osunyi-chat-window {
-            position: fixed;
-            bottom: 100px;
-            right: 25px;
-            width: 350px;
-            height: 550px;
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.15);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 9998;
-            border: 1px solid rgba(229, 178, 164, 0.2);
-            animation: slideUp 0.4s ease forwards;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .chat-header {
-            background: #1a2a40; /* 오너 네이비 */
-            color: white;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .chat-header h3 { font-size: 16px; font-weight: 600; margin: 0; }
-
-        #chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #fdfaf9;
-        }
-
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-break: break-all; }
-        .bot-msg { background: white; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #eee; }
-        .user-msg { background: #e5b2a4; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-
-        .chat-input-area {
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #eee;
-            display: flex;
-            gap: 10px;
-        }
-        #chat-input {
-            flex: 1;
-            border: 1px solid #eee;
-            border-radius: 20px;
-            padding: 10px 15px;
-            outline: none;
-            font-size: 14px;
-        }
-        #chat-send { background: #1a2a40; color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer; }
-    </style>
-
-    <div id="osunyi-chat-btn">🌸</div>
-
-    <div id="osunyi-chat-window">
-        <div class="chat-header">
-            <div style="width:35px; height:35px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#e5b2a4; font-weight:bold;">O</div>
-            <div>
-                <h3>오순이 AX 파트너</h3>
-                <p style="font-size: 10px; opacity: 0.8; margin:0;">무엇을 도와드릴까요?</p>
-            </div>
-        </div>
-        <div id="chat-messages">
-            <div class="message bot-msg">반갑습니다, 리더님! ✨ 오늘도 리더님의 성공을 위해 달리는 오순이입니다. 궁금한 점이 있으신가요?</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." onkeypress="if(event.keyCode==13) document.getElementById('chat-send').click()">
-            <button id="chat-send">전송</button>
-        </div>
-    </div>
-
-    <script>
-        const chatBtn = document.getElementById('osunyi-chat-btn');
-        const chatWindow = document.getElementById('osunyi-chat-window');
-        const chatInput = document.getElementById('chat-input');
-        const chatSend = document.getElementById('chat-send');
-        const chatMessages = document.getElementById('chat-messages');
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJxjgXm4-mOhO28LfauqISFgeU1Q-nCDw8ngRru53dSMImaV8bzRlQ81YCF9JEzKM9/exec';
-
-        chatBtn.onclick = () => {
-            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
-            if(chatWindow.style.display === 'flex') chatInput.focus();
-        };
-
-        function addMessage(text, isBot) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `message ${isBot ? 'bot-msg' : 'user-msg'}`;
-            msgDiv.innerText = text;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        chatSend.onclick = async () => {
-            const text = chatInput.value.trim();
-            if(!text) return;
-            
-            addMessage(text, false);
-            chatInput.value = '';
-
-            // 로딩 메시지 추가
-            const loadingMsg = document.createElement('div');
-            loadingMsg.className = 'message bot-msg';
-            loadingMsg.innerHTML = '<span class="loading-dots">오순이가 생각 중입니다...</span>';
-            chatMessages.appendChild(loadingMsg);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                // GAS 웹앱은 리다이렉션(302)을 사용하므로, 브라우저 fetch의 한계를 고려하여 설계
-                // 1단계: 메시지를 안전하게 전달
+                // 실시간 GAS 연동 (no-cors 모드)
                 await fetch(GAS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -1191,22 +801,19 @@
                     body: JSON.stringify({ message: text, userId: 'user_' + Date.now() })
                 });
                 
-                // 2단계: 사용자에게는 즉각적이고 친절한 가이드 제공 
-                // (현재 no-cors 모드에서는 보안상 본문 읽기가 제한되므로 고도화 전까지는 가이드봇 형태로 운영)
                 setTimeout(() => {
-                    loadingMsg.innerHTML = "리더님, 질문 주셔서 감사합니다! ✨ 제가 오너의 마스터 지식을 검색해서 리더님께 딱 맞는 답변을 준비하고 있어요. 곧 로그 시트를 통해 상세 내용을 확인하실 수 있도록 업데이트할게요! (현재 실시간 응답 엔진 튜닝 중입니다)";
+                    aiDiv.innerHTML = "리더님, 질문 주셔서 감사합니다! ✨ 현재 AI 엔진이 리더님의 질문을 분석하여 로그 시트에 답변을 준비하고 있습니다. (실시간 응답 본문 출력은 보안 설정 업데이트 후 지원될 예정입니다)";
                 }, 1500);
-
-            } catch (error) {
-                loadingMsg.innerHTML = "죄송합니다, 리더님. 잠시 연결이 원활하지 않네요. 다시 한번만 말씀해 주시겠어요? 🙏";
+            } catch (err) {
+                aiDiv.innerText = "죄송합니다, 잠시 연결이 원활하지 않습니다. 🙏";
             }
-        };
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
     </script>
     <style>
-        .loading-dots:after {
-            content: ' .';
-            animation: dots 1s steps(5, end) infinite;
-        }
+        .loading-dots:after { content: ' .'; animation: dots 1s steps(5, end) infinite; }
         @keyframes dots {
             0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
             40% { color: #e5b2a4; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
