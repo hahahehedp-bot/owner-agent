@@ -1268,10 +1268,10 @@
 
         // --- Popup Logic ---
         async function initPopups() {
-            console.log('Osunyi Popup: Initializing...');
+            console.log('오순이 팝업: 초기화 중...');
             const hideUntil = localStorage.getItem('hide_popup_until');
             if (hideUntil && new Date().getTime() < parseInt(hideUntil)) {
-                console.log('Osunyi Popup: Hidden by user today.');
+                console.log('오순이 팝업: 오늘은 표시하지 않음 (사용자 설정).');
                 return;
             }
 
@@ -1298,9 +1298,9 @@
                 });
 
                 document.getElementById('popupOverlay').style.display = 'flex';
-                console.log('Osunyi Popup: Displayed successfully.');
+                console.log('오순이 팝업: 성공적으로 표시됨.');
             } catch (err) {
-                console.error('Osunyi Popup Load Error:', err);
+                console.error('오순이 팝업 로드 에러:', err);
             }
         }
 

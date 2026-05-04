@@ -1,7 +1,7 @@
 {
-  "name": "Osuny",
-  "short_name": "Osuny",
-  "start_url": "index.html?v=1.0.8",
+  "name": "오순이",
+  "short_name": "오순이",
+  "start_url": "index.html?v=1.0.9",
   "display": "standalone",
   "background_color": "#fdf5f2",
   "theme_color": "#fdf5f2",

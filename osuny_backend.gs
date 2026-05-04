@@ -47,12 +47,12 @@ function doGet(e) {
  * 특정 폴더의 파일 목록 및 링크 반환
  */
 function getFolderFiles(folderName) {
-  // 'osuny' 하위의 특정 폴더 찾기
-  const rootFolders = DriveApp.getFoldersByName('osuny');
+  // '오순이' 루트 폴더 찾기
+  const rootFolders = DriveApp.getFoldersByName('오순이');
   if (!rootFolders.hasNext()) return createJsonResponse([]);
   
-  const osunyFolder = rootFolders.next();
-  const targetFolders = osunyFolder.getFoldersByName(folderName);
+  const rootFolder = rootFolders.next();
+  const targetFolders = rootFolder.getFoldersByName(folderName);
   if (!targetFolders.hasNext()) return createJsonResponse([]);
   
   const targetFolder = targetFolders.next();
@@ -61,7 +61,6 @@ function getFolderFiles(folderName) {
   
   while (files.hasNext()) {
     const file = files.next();
-    // 웹에서 바로 보여줄 수 있는 직링크 생성
     fileList.push(`https://drive.google.com/uc?id=${file.getId()}`);
   }
   
@@ -72,22 +71,27 @@ function getFolderFiles(folderName) {
  * 특정 파일의 텍스트 내용 반환 (CSV 등)
  */
 function getFileContent(fileName) {
-  const rootFolders = DriveApp.getFoldersByName('osuny');
+  const rootFolders = DriveApp.getFoldersByName('오순이');
   if (!rootFolders.hasNext()) return ContentService.createTextOutput("Error: Root folder not found");
   
-  const osunyFolder = rootFolders.next();
+  const rootFolder = rootFolders.next();
   
-  // 파일 성격에 따라 폴더 매핑 (한글 원위치 대응)
-  let targetFolderName = '데이터';
+  // 파일 성격에 따라 폴더 매핑 (한글 원위치)
+  let targetFolderName = '데이터'; // 예외 케이스 대비
   if (fileName.includes('schedule')) targetFolderName = '일정';
   if (fileName.includes('resources')) targetFolderName = '자료실';
 
-  const targetFolders = osunyFolder.getFoldersByName(targetFolderName);
-  let searchFolder = osunyFolder;
-  if (targetFolders.hasNext()) searchFolder = targetFolders.next();
+  const targetFolders = rootFolder.getFoldersByName(targetFolderName);
+  let searchFolder = rootFolder;
+  if (targetFolders.hasNext()) {
+    searchFolder = targetFolders.next();
+  } else {
+    // 만약 전용 폴더가 없으면 루트에서 찾기
+    searchFolder = rootFolder;
+  }
 
   const files = searchFolder.getFilesByName(fileName);
-  if (!files.hasNext()) return ContentService.createTextOutput("Error: File not found");
+  if (!files.hasNext()) return ContentService.createTextOutput("Error: File not found: " + fileName);
   
   const file = files.next();
   return ContentService.createTextOutput(file.getBlob().getDataAsString());
