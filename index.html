@@ -6,8 +6,8 @@
     <title>오순이</title>
     
     <!-- PWA & Mobile Optimization -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="osunyi_logo.png">
+    <link rel="manifest" href="manifest.json?v=1.0.2">
+    <link rel="icon" type="image/png" href="osunyi_logo.png?v=1.0.2">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="오순이">
@@ -20,6 +20,17 @@
     <link rel="icon" type="image/png" href="favicon-pink.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        // 캐시된 예전 버전의 팝업 강제 무력화
+        window.alert = function(msg) { 
+            console.log("Blocked Alert:", msg);
+            if(msg.includes("프롬프트")) {
+                // 꼭 필요한 알림만 커스텀하게 허용 (선택 사항)
+                confirm(msg); 
+            }
+            return true; 
+        };
+    </script>
     <style>
         :root {
             --primary-bg: #fdfaf9; /* 부드러운 크림 화이트 */
