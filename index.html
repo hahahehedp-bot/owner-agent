@@ -603,62 +603,71 @@
             <h1>리더님의 <span class="highlight">빛나는 성공</span>을 위하여</h1>
         </section>
 
-        <nav class="menu-grid">
-            <a href="#resourceSection" class="menu-card animate delay-1">
-                <div class="icon-box">✨</div>
-                <div class="menu-info">
-                    <h2>제품 자료실</h2>
-                    <p>리버스12, 세노이드 상세 자료 및 영상</p>
-                </div>
-            </a>
+        <!-- Home View -->
+        <div id="homeView">
+            <nav class="menu-grid">
+                <a href="javascript:void(0)" class="menu-card animate delay-1" onclick="showView('resourceView')">
+                    <div class="icon-box">✨</div>
+                    <div class="menu-info">
+                        <h2>제품 자료실</h2>
+                        <p>리버스12, 세노이드 상세 자료 및 영상</p>
+                    </div>
+                </a>
 
-            <a href="#" class="menu-card animate delay-2">
-                <div class="icon-box">💎</div>
-                <div class="menu-info">
-                    <h2>마스터 교육 센터</h2>
-                    <p>줌 강연 다시보기 및 성공 로드맵</p>
-                </div>
-            </a>
+                <a href="#" class="menu-card animate delay-2">
+                    <div class="icon-box">💎</div>
+                    <div class="menu-info">
+                        <h2>마스터 교육 센터</h2>
+                        <p>줌 강연 다시보기 및 성공 로드맵</p>
+                    </div>
+                </a>
 
-            <a href="#" class="menu-card animate delay-3">
-                <div class="icon-box">💄</div>
-                <div class="menu-info">
-                    <h2>AI 마케팅 무기</h2>
-                    <p>성공을 부르는 SNS 자동 생성 도구</p>
-                </div>
-            </a>
-        </nav>
+                <a href="#" class="menu-card animate delay-3">
+                    <div class="icon-box">💄</div>
+                    <div class="menu-info">
+                        <h2>AI 마케팅 무기</h2>
+                        <p>성공을 부르는 SNS 자동 생성 도구</p>
+                    </div>
+                </a>
+            </nav>
 
-        <section class="schedule-section animate delay-3">
-            <div class="schedule-header">
-                <h3>📅 5월 세미나 일정</h3>
-                <span class="btn-view-all" id="openCalImg">전체 이미지 보기</span>
-            </div>
-            
-            <div class="carousel-container">
-                <div class="carousel-track" id="scheduleCarousel">
-                    <!-- Weeks will be injected by JavaScript -->
+            <section class="schedule-section animate delay-3">
+                <div class="schedule-header">
+                    <h3>📅 5월 세미나 일정</h3>
+                    <span class="btn-view-all" id="openCalImg">전체 이미지 보기</span>
                 </div>
-                <div class="carousel-nav" id="carouselDots">
-                    <!-- Dots will be injected by JavaScript -->
+                
+                <div class="carousel-container">
+                    <div class="carousel-track" id="scheduleCarousel">
+                        <!-- Weeks will be injected by JavaScript -->
+                    </div>
+                    <div class="carousel-nav" id="carouselDots">
+                        <!-- Dots will be injected by JavaScript -->
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
-        <section class="schedule-section animate delay-3" id="resourceSection">
-            <div class="schedule-header">
-                <h3>📂 제품 자료실</h3>
-                <span class="add-label">📥 자료 다운로드</span>
+        <!-- Resource View (Hidden by default) -->
+        <div id="resourceView" style="display: none;">
+            <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <button onclick="showView('homeView')" style="background: var(--official-navy); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer;">← 뒤로가기</button>
             </div>
-            <div class="carousel-container">
-                <div class="carousel-track" id="resourceCarousel">
-                    <!-- Resources will be injected by JavaScript -->
+            <section class="schedule-section" style="margin-top: 0;">
+                <div class="schedule-header">
+                    <h3>📂 제품 자료실</h3>
+                    <span class="add-label">📥 자료 다운로드</span>
                 </div>
-                <div class="carousel-nav" id="resourceDots">
-                    <!-- Dots will be injected by JavaScript -->
+                <div class="carousel-container">
+                    <div class="carousel-track" id="resourceCarousel">
+                        <!-- Resources will be injected by JavaScript -->
+                    </div>
+                    <div class="carousel-nav" id="resourceDots">
+                        <!-- Dots will be injected by JavaScript -->
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <div class="compact-prompt animate delay-3">
             <p>🪄 오늘의 마케팅 마법</p>
@@ -953,6 +962,22 @@
                     dot.classList.toggle('active', i === index);
                 });
             });
+        }
+
+        // --- View Controller ---
+        function showView(viewId) {
+            const homeView = document.getElementById('homeView');
+            const resourceView = document.getElementById('resourceView');
+            
+            if (viewId === 'resourceView') {
+                homeView.style.display = 'none';
+                resourceView.style.display = 'block';
+                window.scrollTo(0, 0);
+            } else {
+                homeView.style.display = 'block';
+                resourceView.style.display = 'none';
+                window.scrollTo(0, 0);
+            }
         }
 
         // 초기 실행
