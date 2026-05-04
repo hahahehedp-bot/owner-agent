@@ -225,6 +225,163 @@
             box-shadow: 0 5px 15px rgba(229, 178, 164, 0.4);
         }
 
+        /* Schedule Widget */
+        .schedule-section {
+            margin-top: 25px;
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .schedule-header h3 {
+            font-size: 16px;
+            color: var(--official-navy);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-view-all {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #fdfaf9;
+            border-radius: 15px;
+            border-left: 4px solid #e5b2a4;
+        }
+
+        .event-date {
+            min-width: 45px;
+            text-align: center;
+            margin-right: 15px;
+        }
+
+        .event-date .day {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--official-navy);
+            line-height: 1;
+        }
+
+        .event-date .month {
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .event-info p {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .btn-cal-add {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            border: 1px solid #eee;
+            transition: all 0.2s;
+        }
+
+        .btn-cal-add:active {
+            transform: scale(0.9);
+            background: #fff5f2;
+        }
+
+        /* Image Modal */
+        .img-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 7000;
+            padding: 20px;
+        }
+
+        .img-modal img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        .btn-modal-close {
+            margin-top: 20px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 30px;
+            border-radius: 25px;
+        }
+
+        /* Compact Prompt Bar */
+        .compact-prompt {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: var(--accent-rose);
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(229, 178, 164, 0.3);
+        }
+
+        .compact-prompt p { font-size: 13px; font-weight: 600; }
+        .btn-copy-mini {
+            background: white;
+            color: #d49a8b;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
         /* Password Modal */
         .modal-overlay {
             position: fixed;
@@ -442,7 +599,7 @@
         </header>
 
         <section class="welcome-box animate">
-            <h1>대표님의 <span class="highlight">빛나는 성공</span>을 위하여</h1>
+            <h1>리더님의 <span class="highlight">빛나는 성공</span>을 위하여</h1>
             <p>오너 파트너님을 위한 프리미엄 스마트 비즈니스 허브</p>
         </section>
 
@@ -472,10 +629,66 @@
             </a>
         </nav>
 
-        <div class="quick-bar animate delay-3">
-            <h3>오늘의 마케팅 마법</h3>
-            <p style="font-size: 12px; color: var(--text-dim);">AI가 대신 써주는 프리미엄 문구를 복사하세요.</p>
-            <a href="#" class="btn-prompt">마스터 프롬프트 복사</a>
+        <section class="schedule-section animate delay-3">
+            <div class="schedule-header">
+                <h3>📅 5월 주요 일정</h3>
+                <span class="btn-view-all" id="openCalImg">전체일정표 보기</span>
+            </div>
+            <div class="event-list">
+                <!-- Event 1 -->
+                <div class="event-item">
+                    <div class="event-date">
+                        <span class="day">07</span>
+                        <span class="month">MAY</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>리버스 마스터 세미나</h4>
+                        <p>10:00 | 본사 (서초)</p>
+                    </div>
+                    <div class="btn-cal-add" onclick="addToCalendar('리버스 마스터 세미나', '20260507T100000', '20260507T170000', '본사', '리버스 마스터 교육 과정입니다.')">➕</div>
+                </div>
+                <!-- Event 2 -->
+                <div class="event-item" style="border-left-color: #official-navy;">
+                    <div class="event-date">
+                        <span class="day">12</span>
+                        <span class="month">MAY</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>O.S.R KW컨벤션</h4>
+                        <p>14:00 | 세미나 랠리</p>
+                    </div>
+                    <div class="btn-cal-add" onclick="addToCalendar('O.S.R KW컨벤션', '20260512T140000', '20260512T180000', 'KW컨벤션', '오너 세미나 랠리')">➕</div>
+                </div>
+                <!-- Event 3 -->
+                <div class="event-item">
+                    <div class="event-date">
+                        <span class="day">21</span>
+                        <span class="month">MAY</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>A.I 초급반 교육</h4>
+                        <p>16:00 | 본사 교육장</p>
+                    </div>
+                    <div class="btn-cal-add" onclick="addToCalendar('A.I 초급반 교육', '20260521T160000', '20260521T200000', '본사', 'AI 기초 활용 능력 배양')">➕</div>
+                </div>
+                <!-- Event 4 -->
+                <div class="event-item" style="border-left-color: #1a1a5e;">
+                    <div class="event-date">
+                        <span class="day">23</span>
+                        <span class="month">MAY</span>
+                    </div>
+                    <div class="event-info">
+                        <h4>A.I 중급 교육</h4>
+                        <p>13:00 | 유여름 마스터</p>
+                    </div>
+                    <div class="btn-cal-add" onclick="addToCalendar('A.I 중급 교육', '20260523T130000', '20260523T180000', '줌(Zoom)', 'AI 중급 실전 전략')">➕</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="compact-prompt animate delay-3">
+            <p>🪄 오늘의 마케팅 마법</p>
+            <a href="#" class="btn-copy-mini btn-prompt">프롬프트 복사</a>
         </div>
 
         <footer>
@@ -493,7 +706,7 @@
             <span style="cursor:pointer" id="closeChat">✕</span>
         </div>
         <div class="chat-body" id="chatBody">
-            <div class="msg ai">반갑습니다, 대표님! 😊 (주)오너의 든든한 조력자 **오순이**예요. 리버스12 마케팅이나 오늘 업무에 대해 무엇이든 저에게 물어보세요!</div>
+            <div class="msg ai">반갑습니다, 리더님! 😊 (주)오너의 든든한 조력자 **오순이**예요. 리버스12 마케팅이나 오늘 업무에 대해 무엇이든 저에게 물어보세요!</div>
         </div>
         <div class="chat-footer">
             <input type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요...">
@@ -552,7 +765,7 @@
             if (pwInput.value === CORRECT_PW) {
                 localStorage.setItem('owner_authorized', 'true');
                 pwModal.style.display = 'none';
-                alert('환영합니다, 대표님! 인증에 성공하였습니다.');
+                alert('환영합니다, 리더님! 인증에 성공하였습니다.');
             } else {
                 alert('비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
                 pwInput.value = '';
@@ -604,6 +817,32 @@
             e.preventDefault();
             alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
         });
+
+        // 일정표 모달 제어
+        const calModal = document.getElementById('calModal');
+        const openCalImg = document.getElementById('openCalImg');
+        const closeCalImg = document.getElementById('closeCalImg');
+
+        openCalImg.addEventListener('click', () => {
+            calModal.style.display = 'flex';
+        });
+
+        closeCalImg.addEventListener('click', () => {
+            calModal.style.display = 'none';
+        });
+
+        // 구글 캘린더 추가 함수
+        function addToCalendar(title, start, end, loc, desc) {
+            const baseUrl = "https://www.google.com/calendar/render?action=TEMPLATE";
+            const url = `${baseUrl}&text=${encodeURIComponent(title)}&dates=${start}/${end}&details=${encodeURIComponent(desc)}&location=${encodeURIComponent(loc)}`;
+            window.open(url, '_blank');
+        }
     </script>
+
+    <!-- Schedule Modal -->
+    <div class="img-modal" id="calModal">
+        <img src="owner_schedule_may.png" alt="5월 일정표 전체보기">
+        <div class="btn-modal-close" id="closeCalImg">닫기</div>
+    </div>
 </body>
 </html>
