@@ -1,0 +1,8 @@
+# 고객사 데이터 폴더 — 절대 리포지토리에 올리지 말 것
+# 데이터는 고객사 Google Drive에서 GAS를 통해 실시간으로 가져옴
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

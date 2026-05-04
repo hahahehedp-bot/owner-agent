@@ -1,160 +1,203 @@
 /**
- * owner-agent (주)오너 통합 비즈니스 시스템 - 오순이 AI 챗봇 엔진 v1.0.4
- * Model: gemini-3.1-flash-lite-preview
- * Last Updated: 2026-05-04
+ * 오순이 챗봇 엔진 (osunyi_backend.gs) v2.0
+ * [핵심 기능]
+ * 1. 유음 API 연결: Gemini 3.1 Flash Lite 모델 사용.
+ * 2. 실시간 폴더 로딩: Drive '오순이' 폴더 실시간 스캔 → 자동 반영
+ * 3. 스마트 메모리: 구글 시트를 사용한 대화 기록 유지.
  */
 
 const CONFIG = {
-  API_KEY: '리더님의_API_키', // 실제 환경에서는 프로퍼티 서비스 권장
+  GEMINI_API_KEY: 'AIzaSyAtafJeztz1ZUBu43hglEDStFG_dDlSYuk',
   MODEL_NAME: 'gemini-3.1-flash-lite-preview',
-  RULES_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/lab-code-rules.md',
-  SKILLS_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/owner-rules.md'
+  RULES_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/osunyi-rules.md',
+  SKILLS_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/owner-tools.md',
+  SHEET_NAME: 'ChatMemory',
+  LOG_SHEET_ID: '1LjnVu9vHv3TkY2_Js_YnFslXpOb1VSF36sx_28MX7cA',
+  ROOT_FOLDER_NAME: '오순이'
 };
 
-/**
- * GET 요청 처리 (브라우저 통신용)
- */
+// =============================================
+// 라우터
+// =============================================
 function doGet(e) {
   try {
     const action = e.parameter.action;
-    
-    // 1. 실시간 폴더 스캔 (이미지 목록)
+
+    // Drive 폴더 파일 목록 반환 (자료실)
     if (action === 'getFolderFiles') {
       return getFolderFiles(e.parameter.folderName);
     }
 
-    // 2. 실시간 파일 읽기 (CSV 등)
+    // Drive CSV 파일 내용 반환 (일정)
     if (action === 'getFileContent') {
       return getFileContent(e.parameter.fileName);
     }
 
-    // 3. 기본 채팅 로직
+    // 챗봇
     const userMessage = e.parameter.message;
-    if (userMessage) {
-      const aiResponse = handleChat(userMessage, e.parameter.userId || 'guest');
-      return createJsonResponse({ status: 'success', reply: aiResponse });
+    const userId = e.parameter.userId || 'guest';
+
+    if (!userMessage) {
+      return createJsonResponse({ status: 'success', message: 'Osunyi Engine v2.0 Running' });
     }
 
-    // 아무 파라미터도 없을 때만 상태 보고 (이게 일정표에 뜨면 안 됨!)
-    return createJsonResponse({ status: 'success', message: 'Osuny Engine is Running' });
+    const reply = handleChat(userMessage, userId);
+    return createJsonResponse({ status: 'success', reply: reply });
 
   } catch (error) {
     return createJsonResponse({ status: 'error', message: error.toString() });
   }
 }
 
-/**
- * 특정 폴더의 파일 목록 및 링크 반환
- */
-function getFolderFiles(folderName) {
-  // '오순이' 루트 폴더 정밀 수색
-  const folders = DriveApp.searchFolders("name = '오순이' and trashed = false");
-  let rootFolder = null;
-  if (folders.hasNext()) rootFolder = folders.next();
-  
-  if (!rootFolder) return createJsonResponse({ status: 'error', message: 'Root folder (오순이) not found' });
-  
-  const targetFolders = rootFolder.getFoldersByName(folderName);
-// ... (rest same)
-  if (!targetFolders.hasNext()) return createJsonResponse([]);
-  
-  const targetFolder = targetFolders.next();
-  const files = targetFolder.getFiles();
-  const fileList = [];
-  
-  while (files.hasNext()) {
-    const file = files.next();
-    fileList.push(`https://drive.google.com/uc?id=${file.getId()}`);
+function doPost(e) {
+  try {
+    let userMessage, userId;
+
+    if (e.postData && e.postData.contents) {
+      const requestData = JSON.parse(e.postData.contents);
+      userMessage = requestData.message;
+      userId = requestData.userId || 'guest';
+    } else {
+      userMessage = e.parameter.message;
+      userId = e.parameter.userId || 'guest';
+    }
+
+    if (!userMessage) {
+      return createJsonResponse({ status: 'error', message: 'No message provided' });
+    }
+
+    const reply = handleChat(userMessage, userId);
+    return createJsonResponse({ status: 'success', reply: reply });
+
+  } catch (error) {
+    return createJsonResponse({ status: 'error', message: error.toString() });
   }
-  
-  return createJsonResponse(fileList);
+}
+
+// =============================================
+// Drive 실시간 스캔
+// =============================================
+
+/** '오순이' 루트 폴더 탐색 */
+function getRootFolder() {
+  const folders = DriveApp.searchFolders(
+    "name = '" + CONFIG.ROOT_FOLDER_NAME + "' and trashed = false"
+  );
+  return folders.hasNext() ? folders.next() : null;
 }
 
 /**
- * 특정 파일의 텍스트 내용 반환 (CSV 등)
+ * 자료실 폴더 내 파일 목록을 카테고리(서브폴더)별로 반환
+ * 구조: 오순이/자료실/{카테고리명}/{파일들}
+ * 직원이 파일 올리면 앱에 자동 반영
  */
-function getFileContent(fileName) {
-  const folders = DriveApp.searchFolders("name = '오순이' and trashed = false");
-  let rootFolder = null;
-  if (folders.hasNext()) rootFolder = folders.next();
-  
-  if (!rootFolder) return ContentService.createTextOutput("Error: Root folder (오순이) not found");
-  
-  // 파일 성격에 따라 폴더 매핑
-  let targetFolderName = '데이터';
-  if (fileName.includes('schedule')) targetFolderName = '일정';
-  if (fileName.includes('resources')) targetFolderName = '자료실';
-
-  const targetFolders = rootFolder.getFoldersByName(targetFolderName);
-  let searchFolder = rootFolder;
-  if (targetFolders.hasNext()) {
-    const tf = targetFolders.next();
-    if (!tf.isTrashed()) searchFolder = tf;
+function getFolderFiles(folderName) {
+  const rootFolder = getRootFolder();
+  if (!rootFolder) {
+    return createJsonResponse({ status: 'error', message: '오순이 폴더를 찾을 수 없습니다.' });
   }
 
+  const targetFolders = rootFolder.getFoldersByName(folderName);
+  if (!targetFolders.hasNext()) {
+    return createJsonResponse([]);
+  }
+
+  const targetFolder = targetFolders.next();
+  const result = [];
+
+  // 서브폴더 = 카테고리
+  const subFolders = targetFolder.getFolders();
+  while (subFolders.hasNext()) {
+    const sub = subFolders.next();
+    if (sub.isTrashed()) continue;
+
+    const category = { category: sub.getName(), files: [] };
+    const files = sub.getFiles();
+    while (files.hasNext()) {
+      const f = files.next();
+      if (f.isTrashed()) continue;
+      category.files.push({
+        name: f.getName(),
+        url: 'https://drive.google.com/uc?export=download&id=' + f.getId(),
+        previewUrl: 'https://drive.google.com/file/d/' + f.getId() + '/view',
+        mimeType: f.getMimeType(),
+        size: formatSize(f.getSize())
+      });
+    }
+    if (category.files.length > 0) result.push(category);
+  }
+
+  // 루트 레벨 파일 (카테고리 없는 것)
+  const rootFiles = targetFolder.getFiles();
+  const uncategorized = { category: '기타', files: [] };
+  while (rootFiles.hasNext()) {
+    const f = rootFiles.next();
+    if (f.isTrashed()) continue;
+    uncategorized.files.push({
+      name: f.getName(),
+      url: 'https://drive.google.com/uc?export=download&id=' + f.getId(),
+      previewUrl: 'https://drive.google.com/file/d/' + f.getId() + '/view',
+      mimeType: f.getMimeType(),
+      size: formatSize(f.getSize())
+    });
+  }
+  if (uncategorized.files.length > 0) result.push(uncategorized);
+
+  return createJsonResponse(result);
+}
+
+/**
+ * CSV 파일 내용 반환 (일정 등)
+ * fileName에 'schedule' 포함 → 일정 폴더에서 탐색
+ */
+function getFileContent(fileName) {
+  const rootFolder = getRootFolder();
+  if (!rootFolder) {
+    return ContentService.createTextOutput('Error: 오순이 폴더를 찾을 수 없습니다.');
+  }
+
+  const targetFolderName = fileName.includes('schedule') ? '일정' : '자료실';
+  let searchFolder = rootFolder;
+  const targetFolders = rootFolder.getFoldersByName(targetFolderName);
+  if (targetFolders.hasNext()) searchFolder = targetFolders.next();
+
   const files = searchFolder.getFilesByName(fileName);
-  let targetFile = null;
   while (files.hasNext()) {
     const file = files.next();
     if (!file.isTrashed()) {
-      targetFile = file;
-      break;
+      return ContentService.createTextOutput(file.getBlob().getDataAsString('UTF-8'));
     }
   }
-  
-  if (!targetFile) return ContentService.createTextOutput("Error: File not found: " + fileName);
-  
-  return ContentService.createTextOutput(targetFile.getBlob().getDataAsString());
+  return ContentService.createTextOutput('Error: ' + fileName + ' 파일을 찾을 수 없습니다.');
 }
 
-/**
- * POST 요청 처리 (확장성용)
- */
-function doPost(e) {
-  try {
-    const requestData = JSON.parse(e.postData.contents);
-    const userMessage = requestData.message;
-    const userId = requestData.userId || 'guest';
-    
-    const aiResponse = handleChat(userMessage, userId);
-    
-    return createJsonResponse({ status: 'success', reply: aiResponse });
-  } catch (error) {
-    return createJsonResponse({ status: 'error', message: error.toString() });
-  }
+function formatSize(bytes) {
+  if (!bytes || bytes === 0) return '-';
+  if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + 'KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + 'MB';
 }
 
-/**
- * 핵심 채팅 로직
- */
+// =============================================
+// 챗봇 로직
+// =============================================
 function handleChat(message, userId) {
   const rules = fetchExternalContent(CONFIG.RULES_URL);
   const skills = fetchExternalContent(CONFIG.SKILLS_URL);
-  const systemPrompt = `여름오빠(유여름)의 AX 시스템 설계 의도에 따라, (주)오너의 리더님(사업자)들을 보좌하는 AI 비서 '오순이'로서 답변하세요.\n\n[원칙]\n${rules}\n\n[비즈니스 맥락]\n${skills}`;
-  
+  const systemPrompt = rules + '\n\n[비즈니스 맥락]\n' + skills;
+
   const history = getMemory(userId);
   const aiResponse = callGemini(message, history, systemPrompt);
-  
+
   saveMemory(userId, message, aiResponse);
   return aiResponse;
 }
 
-/**
- * Gemini API 호출
- */
 function callGemini(message, history, systemPrompt) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${CONFIG.MODEL_NAME}:generateContent?key=${CONFIG.API_KEY}`;
-  
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + CONFIG.MODEL_NAME + ':generateContent?key=' + CONFIG.GEMINI_API_KEY;
+
   const payload = {
-    contents: [
-      { role: 'user', parts: [{ text: systemPrompt }] },
-      ...history,
-      { role: 'user', parts: [{ text: message }] }
-    ],
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 1000
-    }
+    contents: history.concat([{ role: 'user', parts: [{ text: message }] }]),
+    system_instruction: { parts: [{ text: systemPrompt }] }
   };
 
   const options = {
@@ -166,47 +209,51 @@ function callGemini(message, history, systemPrompt) {
 
   const response = UrlFetchApp.fetch(url, options);
   const result = JSON.parse(response.getContentText());
-  
-  if (result.candidates && result.candidates[0].content.parts[0].text) {
+
+  if (result.candidates && result.candidates[0]) {
     return result.candidates[0].content.parts[0].text;
   } else {
-    throw new Error('AI 답변 생성 실패: ' + response.getContentText());
+    throw new Error('API 호출 실패. 키 설정을 확인해 주세요. ' + JSON.stringify(result));
   }
 }
 
-/**
- * 외부 콘텐츠 로드
- */
 function fetchExternalContent(url) {
   try {
-    return UrlFetchApp.fetch(url).getContentText();
+    const response = UrlFetchApp.fetch(url + '?cb=' + new Date().getTime());
+    return response.getContentText();
   } catch (e) {
-    return "";
+    return '정보 로드 실패';
   }
 }
 
-/**
- * 메모리 관리 (Spreadsheet 연동)
- */
+// =============================================
+// 메모리 (시트 기반)
+// =============================================
 function getMemory(userId) {
-  // 실제 구현 시 시트에서 해당 유저의 대화 이력 로드 로직 추가
-  return []; 
+  const ss = SpreadsheetApp.openById(CONFIG.LOG_SHEET_ID);
+  let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG.SHEET_NAME);
+    sheet.appendRow(['UserID', 'Role', 'Content', 'Timestamp']);
+  }
+  const data = sheet.getDataRange().getValues();
+  return data.filter(row => row[0] === userId).slice(-10).map(row => ({
+    role: row[1],
+    parts: [{ text: row[2] }]
+  }));
 }
 
 function saveMemory(userId, userMsg, aiMsg) {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName('ChatLog');
-    if (!sheet) sheet = ss.insertSheet('ChatLog');
-    
-    sheet.appendRow([new Date(), userId, userMsg, aiMsg]);
-  } catch (e) {}
+  const sheet = SpreadsheetApp.openById(CONFIG.LOG_SHEET_ID).getSheetByName(CONFIG.SHEET_NAME);
+  const now = new Date();
+  sheet.appendRow([userId, 'user', userMsg, now]);
+  sheet.appendRow([userId, 'model', aiMsg, now]);
 }
 
-/**
- * JSON 응답 생성 유틸리티
- */
+// =============================================
+// 유틸
+// =============================================
 function createJsonResponse(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
-                       .setMimeType(ContentService.MimeType.JSON);
+    .setMimeType(ContentService.MimeType.JSON);
 }
