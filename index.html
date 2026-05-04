@@ -767,89 +767,86 @@
             alert('62번 마스터 프롬프트가 복사되었습니다. AI에게 붙여넣으세요!');
         });
 
-        // --- Schedule Data ---
-        const scheduleData = [
-            {
-                weekTitle: "5월 2주차 (5/4 ~ 5/10)",
-                events: [
-                    { day: "04", title: "줌 방송(스킨케어) & 천안OM", time: "11:00 / 14:00", loc: "줌/천안", desc: "주간 줌방송 및 천안 미팅" },
-                    { day: "05", title: "전국 OM (부산/서산/남원/창원)", time: "14:00 / 19:00", loc: "각 지역", desc: "어린이날 특별 미팅" },
-                    { day: "07", title: "리버스 마스터 & 본사 교육", time: "10:00 / 13:00", loc: "본사", desc: "제품 및 사업소개" },
-                    { day: "09", title: "A.I 중급 줌교육 (유여름)", time: "09:00~12:00", loc: "Zoom", desc: "AI 중급 실전 전략" }
-                ]
-            },
-            {
-                weekTitle: "5월 3주차 (5/11 ~ 5/17)",
-                events: [
-                    { day: "11", title: "줌 방송(파이오니) & 천안OM", time: "11:00 / 14:00", loc: "줌/천안", desc: "주간 줌방송 및 천안 미팅" },
-                    { day: "12", title: "O.S.R KW컨벤션 랠리", time: "14:00", loc: "KW컨벤션", desc: "오너 세미나 랠리" },
-                    { day: "13", title: "광주 OM (김은정 리더)", time: "14:00", loc: "광주", desc: "광주 지역 미팅" },
-                    { day: "15", title: "대구 OM (김은정 리더)", time: "14:00", loc: "대구", desc: "대구 지역 미팅" }
-                ]
-            },
-            {
-                weekTitle: "5월 4주차 (5/18 ~ 5/24)",
-                events: [
-                    { day: "18", title: "줌 방송(M&M) & 천안/제주OM", time: "11:00 / 14:00", loc: "전국", desc: "주간 줌방송" },
-                    { day: "20", title: "호남 리버스 마스터", time: "10:00~16:00", loc: "호남", desc: "마스터 교육 과정" },
-                    { day: "21", title: "본사 교육 & A.I 초급반", time: "13:00 / 16:00", loc: "본사", desc: "AI 기초 교육" },
-                    { day: "23", title: "A.I 중급 교육 (유여름)", time: "13:00~18:00", loc: "미정", desc: "AI 중급 실전 교육" }
-                ]
-            },
-            {
-                weekTitle: "5월 5주차 (5/25 ~ 5/31)",
-                events: [
-                    { day: "26", title: "전국 OM (부산/서산/남원/창원)", time: "14:00 / 19:00", loc: "각 지역", desc: "화요 정기 미팅" },
-                    { day: "27", title: "광주 OM (김은정 리더)", time: "14:00", loc: "광주", desc: "광주 지역 미팅" },
-                    { day: "28", title: "본사 사업소개 & 생활용품", time: "13:00", loc: "본사", desc: "본사 정기 교육" }
-                ]
-            }
-        ];
+        // --- Render Schedule Function ---
+        function renderSchedule(data) {
+            const carousel = document.getElementById('scheduleCarousel');
+            const dotsContainer = document.getElementById('carouselDots');
+            carousel.innerHTML = '';
+            dotsContainer.innerHTML = '';
 
-        // --- Render Schedule ---
-        const carousel = document.getElementById('scheduleCarousel');
-        const dotsContainer = document.getElementById('carouselDots');
-
-        scheduleData.forEach((week, index) => {
-            const slide = document.createElement('div');
-            slide.className = 'week-slide';
-            
-            let eventsHtml = week.events.map(e => `
-                <div class="event-item">
-                    <div class="event-date">
-                        <span class="day">${e.day}</span>
-                        <span class="month">MAY</span>
+            data.forEach((week, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'week-slide';
+                
+                let eventsHtml = week.events.map(e => `
+                    <div class="event-item">
+                        <div class="event-date">
+                            <span class="day">${e.day}</span>
+                            <span class="month">MAY</span>
+                        </div>
+                        <div class="event-info">
+                            <h4>${e.title}</h4>
+                            <p>${e.time} | ${e.loc}</p>
+                        </div>
+                        <div class="btn-cal-add" onclick="addToCalendar('${e.title}', '202605${e.day}T100000', '202605${e.day}T180000', '${e.loc}', '${e.desc}')">➕</div>
                     </div>
-                    <div class="event-info">
-                        <h4>${e.title}</h4>
-                        <p>${e.time} | ${e.loc}</p>
-                    </div>
-                    <div class="btn-cal-add" onclick="addToCalendar('${e.title}', '202605${e.day}T100000', '202605${e.day}T180000', '${e.loc}', '${e.desc}')">➕</div>
-                </div>
-            `).join('');
+                `).join('');
 
-            slide.innerHTML = `
-                <div class="week-title">${week.weekTitle}</div>
-                <div class="event-list">${eventsHtml}</div>
-            `;
-            carousel.appendChild(slide);
+                slide.innerHTML = `
+                    <div class="week-title">${week.weekTitle}</div>
+                    <div class="event-list">${eventsHtml}</div>
+                `;
+                carousel.appendChild(slide);
 
-            const dot = document.createElement('div');
-            dot.className = `dot ${index === 0 ? 'active' : ''}`;
-            dotsContainer.appendChild(dot);
-        });
-
-        // --- Scroll Event for Dots ---
-        carousel.addEventListener('scroll', () => {
-            const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
-            document.querySelectorAll('.dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
+                const dot = document.createElement('div');
+                dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                dotsContainer.appendChild(dot);
             });
-        });
 
-        // --- Initial Scroll to Current Week ---
-        // 5월 4일 기준이므로 0번째 인덱스(2주차)가 기본
-        carousel.scrollLeft = 0;
+            carousel.addEventListener('scroll', () => {
+                const index = Math.round(carousel.scrollLeft / carousel.offsetWidth);
+                document.querySelectorAll('.dot').forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            });
+            carousel.scrollLeft = 0;
+        }
+
+        // --- Load Data from CSV ---
+        async function loadSchedule() {
+            try {
+                const response = await fetch('data/schedule.csv');
+                const text = await response.text();
+                const rows = text.split('\n').slice(1); // Header 제외
+                
+                const groupedData = {};
+                
+                rows.forEach(row => {
+                    if (!row.trim()) return;
+                    const [week, day, title, time, loc, desc] = row.split(',');
+                    const weekKey = `${week}주차`;
+                    
+                    if (!groupedData[weekKey]) {
+                        groupedData[weekKey] = {
+                            weekTitle: `5월 ${week}주차`,
+                            events: []
+                        };
+                    }
+                    
+                    groupedData[weekKey].events.push({ day, title, time, loc, desc });
+                });
+
+                const finalData = Object.values(groupedData);
+                renderSchedule(finalData);
+            } catch (err) {
+                console.error('Schedule Load Error:', err);
+                // Fallback (데이터 로드 실패 시 메시지)
+                document.getElementById('scheduleCarousel').innerHTML = '<p style="padding:20px; font-size:12px; color:var(--text-dim);">일정표 데이터를 불러오는 중입니다...</p>';
+            }
+        }
+
+        // 초기 실행
+        loadSchedule();
 
         // --- Modals & Other ---
         document.querySelector('.btn-prompt').addEventListener('click', (e) => {
