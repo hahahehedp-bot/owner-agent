@@ -16,6 +16,20 @@ const CONFIG = {
  */
 function doGet(e) {
   try {
+    const action = e.parameter.action;
+    
+    // 실시간 폴더 스캔 기능 (팝업, 일정 등)
+    if (action === 'getFolderFiles') {
+      const folderName = e.parameter.folderName;
+      return getFolderFiles(folderName);
+    }
+
+    // 실시간 파일 내용 읽기 (CSV 등)
+    if (action === 'getFileContent') {
+      const fileName = e.parameter.fileName;
+      return getFileContent(fileName);
+    }
+
     const userMessage = e.parameter.message;
     const userId = e.parameter.userId || 'guest';
     
@@ -27,6 +41,51 @@ function doGet(e) {
   } catch (error) {
     return createJsonResponse({ status: 'error', message: error.toString() });
   }
+}
+
+/**
+ * 특정 폴더의 파일 목록 및 링크 반환
+ */
+function getFolderFiles(folderName) {
+  // 'osuny' 하위의 특정 폴더 찾기
+  const rootFolders = DriveApp.getFoldersByName('osuny');
+  if (!rootFolders.hasNext()) return createJsonResponse([]);
+  
+  const osunyFolder = rootFolders.next();
+  const targetFolders = osunyFolder.getFoldersByName(folderName);
+  if (!targetFolders.hasNext()) return createJsonResponse([]);
+  
+  const targetFolder = targetFolders.next();
+  const files = targetFolder.getFiles();
+  const fileList = [];
+  
+  while (files.hasNext()) {
+    const file = files.next();
+    // 웹에서 바로 보여줄 수 있는 직링크 생성
+    fileList.push(`https://drive.google.com/uc?id=${file.getId()}`);
+  }
+  
+  return createJsonResponse(fileList);
+}
+
+/**
+ * 특정 파일의 텍스트 내용 반환 (CSV 등)
+ */
+function getFileContent(fileName) {
+  const rootFolders = DriveApp.getFoldersByName('osuny');
+  if (!rootFolders.hasNext()) return ContentService.createTextOutput("Error: Root folder not found");
+  
+  const osunyFolder = rootFolders.next();
+  // data 폴더 안의 파일 찾기
+  const dataFolders = osunyFolder.getFoldersByName('data');
+  let searchFolder = osunyFolder;
+  if (dataFolders.hasNext()) searchFolder = dataFolders.next();
+
+  const files = searchFolder.getFilesByName(fileName);
+  if (!files.hasNext()) return ContentService.createTextOutput("Error: File not found");
+  
+  const file = files.next();
+  return ContentService.createTextOutput(file.getBlob().getDataAsString());
 }
 
 /**

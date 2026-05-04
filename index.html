@@ -1099,7 +1099,8 @@
 5,28,본사 사업소개 & 생활용품,13:00,본사,본사 정기 교육`;
 
             try {
-                const response = await fetch('osuny/data/schedule.csv');
+                // 실시간 GAS API를 통해 G: 드라이브 schedule.csv 직접 읽기
+                const response = await fetch(`${GAS_URL}?action=getFileContent&fileName=schedule.csv&v=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
                 parseAndRender(text);
@@ -1128,7 +1129,8 @@
         // --- Resources Load from CSV ---
         async function loadResources() {
             try {
-                const response = await fetch('osuny/data/resources.csv');
+                // 실시간 GAS API를 통해 G: 드라이브 resources.csv 직접 읽기
+                const response = await fetch(`${GAS_URL}?action=getFileContent&fileName=resources.csv&v=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
                 const rows = text.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
@@ -1274,14 +1276,17 @@
             }
 
             try {
-                // 캐시 무력화를 위해 타임스탬프 추가
-                const response = await fetch('osuny/data/popups.json?v=' + new Date().getTime());
+                // 실시간 GAS API 호출 (G: 드라이브 popup 폴더 스캔)
+                const response = await fetch(`${GAS_URL}?action=getFolderFiles&folderName=popup&v=${new Date().getTime()}`);
                 if (!response.ok) {
-                    console.warn('Osunyi Popup: JSON not found.');
+                    console.warn('Osuny Popup: GAS API error.');
                     return;
                 }
                 const popups = await response.json();
-                if (!popups || popups.length === 0) return;
+                if (!popups || popups.length === 0) {
+                    console.log('Osuny Popup: No active popups found in Drive.');
+                    return;
+                }
 
                 const slider = document.getElementById('popupSlider');
                 slider.innerHTML = ''; // Clear previous
