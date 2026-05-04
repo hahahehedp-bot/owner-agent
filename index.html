@@ -589,7 +589,7 @@
         </header>
 
         <section class="welcome-box animate">
-            <h1>리더님의 <span class="highlight">빛나는 성공</span>을 위하여</h1>
+            <h1>대표님의 <span class="highlight">빛나는 성공</span>을 위하여</h1>
             <p>오너 파트너님을 위한 프리미엄 스마트 비즈니스 허브</p>
         </section>
 
@@ -814,35 +814,48 @@
 
         // --- Load Data from CSV ---
         async function loadSchedule() {
+            const fallbackCsv = `Week,Day,Title,Time,Location,Description
+2,04,줌 방송(스킨케어) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
+2,05,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,어린이날 특별 미팅
+2,07,리버스 마스터 & 본사 교육,10:00 / 13:00,본사,제품 및 사업소개
+2,09,A.I 중급 줌교육 (유여름),09:00~12:00,Zoom,AI 중급 실전 전략
+3,11,줌 방송(파이오니) & 천안OM,11:00 / 14:00,줌/천안,주간 줌방송 및 천안 미팅
+3,12,O.S.R KW컨벤션 랠리,14:00,KW컨벤션,오너 세미나 랠리
+3,13,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
+3,15,대구 OM (김은정 리더),14:00,대구,대구 지역 미팅
+4,18,줌 방송(M&M) & 천안/제주OM,11:00 / 14:00,전국,주간 줌방송
+4,20,호남 리버스 마스터,10:00~16:00,호남,마스터 교육 과정
+4,21,본사 교육 & A.I 초급반,13:00 / 16:00,본사,AI 기초 교육
+4,23,A.I 중급 교육 (유여름),13:00~18:00,미정,AI 중급 실전 교육
+5,26,전국 OM (부산/서산/남원/창원),14:00 / 19:00,각 지역,화요 정기 미팅
+5,27,광주 OM (김은정 리더),14:00,광주,광주 지역 미팅
+5,28,본사 사업소개 & 생활용품,13:00,본사,본사 정기 교육`;
+
             try {
                 const response = await fetch('data/schedule.csv');
+                if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
-                const rows = text.split('\n').slice(1); // Header 제외
-                
-                const groupedData = {};
-                
-                rows.forEach(row => {
-                    if (!row.trim()) return;
-                    const [week, day, title, time, loc, desc] = row.split(',');
-                    const weekKey = `${week}주차`;
-                    
-                    if (!groupedData[weekKey]) {
-                        groupedData[weekKey] = {
-                            weekTitle: `5월 ${week}주차`,
-                            events: []
-                        };
-                    }
-                    
-                    groupedData[weekKey].events.push({ day, title, time, loc, desc });
-                });
-
-                const finalData = Object.values(groupedData);
-                renderSchedule(finalData);
+                parseAndRender(text);
             } catch (err) {
-                console.error('Schedule Load Error:', err);
-                // Fallback (데이터 로드 실패 시 메시지)
-                document.getElementById('scheduleCarousel').innerHTML = '<p style="padding:20px; font-size:12px; color:var(--text-dim);">일정표 데이터를 불러오는 중입니다...</p>';
+                console.warn('Local file or Fetch error, using fallback data:', err);
+                parseAndRender(fallbackCsv);
             }
+        }
+
+        function parseAndRender(csvText) {
+            const rows = csvText.split('\n').filter(r => r.trim() && !r.startsWith('Week'));
+            const groupedData = {};
+            
+            rows.forEach(row => {
+                const [week, day, title, time, loc, desc] = row.split(',');
+                const weekKey = `${week}주차`;
+                if (!groupedData[weekKey]) {
+                    groupedData[weekKey] = { weekTitle: `5월 ${week}주차`, events: [] };
+                }
+                groupedData[weekKey].events.push({ day, title, time, loc, desc });
+            });
+
+            renderSchedule(Object.values(groupedData));
         }
 
         // 초기 실행
