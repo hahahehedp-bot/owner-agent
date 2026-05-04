@@ -1266,16 +1266,25 @@
 
         // --- Popup Logic ---
         async function initPopups() {
+            console.log('Osunyi Popup: Initializing...');
             const hideUntil = localStorage.getItem('hide_popup_until');
-            if (hideUntil && new Date().getTime() < parseInt(hideUntil)) return;
+            if (hideUntil && new Date().getTime() < parseInt(hideUntil)) {
+                console.log('Osunyi Popup: Hidden by user today.');
+                return;
+            }
 
             try {
-                const response = await fetch('data/popups.json');
-                if (!response.ok) return;
+                // 캐시 무력화를 위해 타임스탬프 추가
+                const response = await fetch('data/popups.json?v=' + new Date().getTime());
+                if (!response.ok) {
+                    console.warn('Osunyi Popup: JSON not found.');
+                    return;
+                }
                 const popups = await response.json();
                 if (!popups || popups.length === 0) return;
 
                 const slider = document.getElementById('popupSlider');
+                slider.innerHTML = ''; // Clear previous
                 popups.forEach(src => {
                     const slide = document.createElement('div');
                     slide.className = 'popup-slide';
@@ -1284,8 +1293,9 @@
                 });
 
                 document.getElementById('popupOverlay').style.display = 'flex';
+                console.log('Osunyi Popup: Displayed successfully.');
             } catch (err) {
-                console.error('Popup Load Error:', err);
+                console.error('Osunyi Popup Load Error:', err);
             }
         }
 
@@ -1293,7 +1303,7 @@
             document.getElementById('popupOverlay').style.display = 'none';
             if (hideToday) {
                 const tomorrow = new Date();
-                tomorrow.setHours(24, 0, 0, 0); // Next midnight
+                tomorrow.setHours(24, 0, 0, 0); 
                 localStorage.setItem('hide_popup_until', tomorrow.getTime().toString());
             }
         }
@@ -1309,8 +1319,8 @@
             document.getElementById('fullscreenOverlay').style.display = 'none';
         }
 
-        // Initialize Popups on load
-        window.addEventListener('load', initPopups);
+        // Initialize Popups on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', initPopups);
     </script>
 
 
