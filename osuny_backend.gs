@@ -7,12 +7,12 @@
  */
 
 const CONFIG = {
-  GEMINI_API_KEY: 'AIzaSyAtafJeztz1ZUBu43hglEDStFG_dDlSYuk',
+  GEMINI_API_KEY: 'AIzaSyAYKTuAlH4an4AY3bhGxm1rkpR7zAsgXtA',
   MODEL_NAME: 'gemini-3.1-flash-lite-preview',
   RULES_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/osunyi-rules.md',
   SKILLS_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/owner-tools.md',
   SHEET_NAME: 'ChatMemory',
-  LOG_SHEET_ID: '1LjnVu9vHv3TkY2_Js_YnFslXpOb1VSF36sx_28MX7cA',
+  LOG_SHEET_ID: '1LjnVu9vHv3TkY2_Ji_YnFslXpOb1VSF36sx_28MX7cA',
   ROOT_FOLDER_NAME: '오순이'
 };
 
