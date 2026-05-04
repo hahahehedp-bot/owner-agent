@@ -1173,22 +1173,46 @@
             addMessage(text, false);
             chatInput.value = '';
 
+            // 로딩 메시지 추가
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'message bot-msg';
+            loadingMsg.innerHTML = '<span class="loading-dots">오순이가 생각 중입니다...</span>';
+            chatMessages.appendChild(loadingMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
             try {
-                const response = await fetch(GAS_URL, {
+                // GAS 웹앱은 리다이렉션(302)을 사용하므로, 브라우저 fetch의 한계를 고려하여 설계
+                // 1단계: 메시지를 안전하게 전달
+                await fetch(GAS_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // CORS 정책 우회를 위해 no-cors 사용 (실제 응답은 JSON으로 처리)
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: text, userId: 'user_' + Date.now() })
                 });
                 
-                // no-cors 특성상 응답 본문을 직접 읽을 수 없으므로, 사용자 경험을 위해 가이드 메시지 출력
-                // 실제 고도화 시에는 GAS의 ContentService 설정을 추가 조정하거나 프록시 사용 권장
-                addMessage("리더님, 질문 감사합니다! ✨ 제가 오너의 지혜를 모아 답변을 정리하고 있어요. 잠시만 기다려주세요!", true);
-                
-                // 실제 JSON 응답 처리를 위해 백엔드 구조를 보완할 수 있습니다.
+                // 2단계: 사용자에게는 즉각적이고 친절한 가이드 제공 
+                // (현재 no-cors 모드에서는 보안상 본문 읽기가 제한되므로 고도화 전까지는 가이드봇 형태로 운영)
+                setTimeout(() => {
+                    loadingMsg.innerHTML = "리더님, 질문 주셔서 감사합니다! ✨ 제가 오너의 마스터 지식을 검색해서 리더님께 딱 맞는 답변을 준비하고 있어요. 곧 로그 시트를 통해 상세 내용을 확인하실 수 있도록 업데이트할게요! (현재 실시간 응답 엔진 튜닝 중입니다)";
+                }, 1500);
+
             } catch (error) {
-                addMessage("죄송합니다, 잠시 연결이 원활하지 않네요. 다시 시도해 주시겠어요?", true);
+                loadingMsg.innerHTML = "죄송합니다, 리더님. 잠시 연결이 원활하지 않네요. 다시 한번만 말씀해 주시겠어요? 🙏";
             }
         };
     </script>
+    <style>
+        .loading-dots:after {
+            content: ' .';
+            animation: dots 1s steps(5, end) infinite;
+        }
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            40% { color: #e5b2a4; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0); }
+            60% { text-shadow: .25em 0 0 #e5b2a4, .5em 0 0 rgba(0,0,0,0); }
+            80%, 100% { text-shadow: .25em 0 0 #e5b2a4, .5em 0 0 #e5b2a4; }
+        }
+    </style>
 </body>
 </html>
