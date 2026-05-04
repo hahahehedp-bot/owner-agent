@@ -1103,6 +1103,11 @@
                 const response = await fetch(`${GAS_URL}?action=getFileContent&fileName=schedule.csv&v=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
+                
+                if (text.startsWith('Error')) {
+                    console.error('오순이 일정 로드 실패:', text);
+                    return;
+                }
                 parseAndRender(text);
             } catch (err) {
                 console.warn('Local file or Fetch error, using fallback data:', err);
@@ -1133,6 +1138,12 @@
                 const response = await fetch(`${GAS_URL}?action=getFileContent&fileName=resources.csv&v=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Fetch failed');
                 const text = await response.text();
+
+                if (text.startsWith('Error')) {
+                    console.error('오순이 자료실 로드 실패:', text);
+                    return;
+                }
+                
                 const rows = text.split('\n').filter(r => r.trim() && !r.startsWith('Category'));
                 
                 const groupedData = {};
