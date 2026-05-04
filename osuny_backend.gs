@@ -47,20 +47,15 @@ function doGet(e) {
  * 특정 폴더의 파일 목록 및 링크 반환
  */
 function getFolderFiles(folderName) {
-  // '오순이' 루트 폴더 찾기 (휴지통 제외)
-  const folders = DriveApp.getFoldersByName('오순이');
+  // '오순이' 루트 폴더 정밀 수색
+  const folders = DriveApp.searchFolders("name = '오순이' and trashed = false");
   let rootFolder = null;
-  while (folders.hasNext()) {
-    const f = folders.next();
-    if (!f.isTrashed()) {
-      rootFolder = f;
-      break;
-    }
-  }
+  if (folders.hasNext()) rootFolder = folders.next();
   
   if (!rootFolder) return createJsonResponse({ status: 'error', message: 'Root folder (오순이) not found' });
   
   const targetFolders = rootFolder.getFoldersByName(folderName);
+// ... (rest same)
   if (!targetFolders.hasNext()) return createJsonResponse([]);
   
   const targetFolder = targetFolders.next();
@@ -79,15 +74,9 @@ function getFolderFiles(folderName) {
  * 특정 파일의 텍스트 내용 반환 (CSV 등)
  */
 function getFileContent(fileName) {
-  const folders = DriveApp.getFoldersByName('오순이');
+  const folders = DriveApp.searchFolders("name = '오순이' and trashed = false");
   let rootFolder = null;
-  while (folders.hasNext()) {
-    const f = folders.next();
-    if (!f.isTrashed()) {
-      rootFolder = f;
-      break;
-    }
-  }
+  if (folders.hasNext()) rootFolder = folders.next();
   
   if (!rootFolder) return ContentService.createTextOutput("Error: Root folder (오순이) not found");
   

@@ -1112,6 +1112,7 @@
                 
                 if (text.startsWith('Error')) {
                     console.error('오순이 일정 로드 실패:', text);
+                    document.getElementById('scheduleContent').innerHTML = `<div style="color:red; padding:20px; text-align:center;">⚠️ 데이터 연결 오류: ${text}</div>`;
                     return;
                 }
                 parseAndRender(text);
@@ -1152,6 +1153,7 @@
 
                 if (text.startsWith('Error')) {
                     console.error('오순이 자료실 로드 실패:', text);
+                    document.getElementById('resourceList').innerHTML = `<div style="color:red; padding:20px; text-align:center;">⚠️ 자료실 연결 오류: ${text}</div>`;
                     return;
                 }
                 
