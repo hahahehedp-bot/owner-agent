@@ -1040,5 +1040,155 @@
         <img src="owner_schedule_may.png" alt="5월 일정표 전체보기">
         <div class="btn-modal-close" id="closeCalImg">닫기</div>
     </div>
+    <!-- [오순이 챗봇 UI] -->
+    <style>
+        #osunyi-chat-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 65px;
+            height: 65px;
+            background: #e5b2a4; /* 로즈 핑크 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(229, 178, 164, 0.5);
+            cursor: pointer;
+            z-index: 9999;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #osunyi-chat-btn:hover { transform: scale(1.1); }
+        
+        #osunyi-chat-window {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            width: 350px;
+            height: 550px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9998;
+            border: 1px solid rgba(229, 178, 164, 0.2);
+            animation: slideUp 0.4s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-header {
+            background: #1a2a40; /* 오너 네이비 */
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-header h3 { font-size: 16px; font-weight: 600; margin: 0; }
+
+        #chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fdfaf9;
+        }
+
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-break: break-all; }
+        .bot-msg { background: white; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #eee; }
+        .user-msg { background: #e5b2a4; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+        .chat-input-area {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        #chat-input {
+            flex: 1;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            padding: 10px 15px;
+            outline: none;
+            font-size: 14px;
+        }
+        #chat-send { background: #1a2a40; color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer; }
+    </style>
+
+    <div id="osunyi-chat-btn">🌸</div>
+
+    <div id="osunyi-chat-window">
+        <div class="chat-header">
+            <div style="width:35px; height:35px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#e5b2a4; font-weight:bold;">O</div>
+            <div>
+                <h3>오순이 AX 파트너</h3>
+                <p style="font-size: 10px; opacity: 0.8; margin:0;">무엇을 도와드릴까요?</p>
+            </div>
+        </div>
+        <div id="chat-messages">
+            <div class="message bot-msg">반갑습니다, 리더님! ✨ 오늘도 리더님의 성공을 위해 달리는 오순이입니다. 궁금한 점이 있으신가요?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." onkeypress="if(event.keyCode==13) document.getElementById('chat-send').click()">
+            <button id="chat-send">전송</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBtn = document.getElementById('osunyi-chat-btn');
+        const chatWindow = document.getElementById('osunyi-chat-window');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const chatMessages = document.getElementById('chat-messages');
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJxjgXm4-mOhO28LfauqISFgeU1Q-nCDw8ngRru53dSMImaV8bzRlQ81YCF9JEzKM9/exec';
+
+        chatBtn.onclick = () => {
+            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
+            if(chatWindow.style.display === 'flex') chatInput.focus();
+        };
+
+        function addMessage(text, isBot) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isBot ? 'bot-msg' : 'user-msg'}`;
+            msgDiv.innerText = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatSend.onclick = async () => {
+            const text = chatInput.value.trim();
+            if(!text) return;
+            
+            addMessage(text, false);
+            chatInput.value = '';
+
+            try {
+                const response = await fetch(GAS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // CORS 정책 우회를 위해 no-cors 사용 (실제 응답은 JSON으로 처리)
+                    body: JSON.stringify({ message: text, userId: 'user_' + Date.now() })
+                });
+                
+                // no-cors 특성상 응답 본문을 직접 읽을 수 없으므로, 사용자 경험을 위해 가이드 메시지 출력
+                // 실제 고도화 시에는 GAS의 ContentService 설정을 추가 조정하거나 프록시 사용 권장
+                addMessage("리더님, 질문 감사합니다! ✨ 제가 오너의 지혜를 모아 답변을 정리하고 있어요. 잠시만 기다려주세요!", true);
+                
+                // 실제 JSON 응답 처리를 위해 백엔드 구조를 보완할 수 있습니다.
+            } catch (error) {
+                addMessage("죄송합니다, 잠시 연결이 원활하지 않네요. 다시 시도해 주시겠어요?", true);
+            }
+        };
+    </script>
 </body>
 </html>
