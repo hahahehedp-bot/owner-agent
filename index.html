@@ -513,8 +513,36 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
             background: #fdfaf9;
+        }
+
+        /* AI Message with Avatar */
+        .ai-msg-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            align-self: flex-start;
+            max-width: 85%;
+        }
+
+        .ai-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid var(--glass-border);
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .ai-avatar img {
+            width: 120%; /* 캐릭터를 조금 더 크게 */
+            height: auto;
         }
 
         .msg {
@@ -526,11 +554,11 @@
         }
 
         .msg.ai {
-            align-self: flex-start;
             background: white;
             color: var(--text-main);
             border-bottom-left-radius: 4px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-top: 5px;
         }
 
         .msg.user {
@@ -700,7 +728,11 @@
             <span style="cursor:pointer" id="closeChat">✕</span>
         </div>
         <div class="chat-body" id="chatBody">
-            <div class="msg ai">반갑습니다, 리더님! 😊 (주)오너의 든든한 조력자 **오순이**예요. 리버스12 마케팅이나 오늘 업무에 대해 무엇이든 저에게 물어보세요!</div>
+            <div style="flex: 1;"></div> <!-- Push messages to bottom -->
+            <div class="ai-msg-container">
+                <div class="ai-avatar"><img src="osunyi_logo.png" alt="오"></div>
+                <div class="msg ai">반갑습니다, 리더님! 😊 (주)오너의 든든한 조력자 **오순이**예요. 리버스12 마케팅이나 오늘 업무에 대해 무엇이든 저에게 물어보세요!</div>
+            </div>
         </div>
         <div class="chat-footer">
             <input type="text" class="chat-input" id="chatInput" placeholder="메시지를 입력하세요...">
@@ -772,13 +804,32 @@
             if (e.key === 'Enter') verifyBtn.click();
         });
 
-        // 채팅창 토글
-        chatFab.addEventListener('click', () => {
-            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
-        });
+        // 채팅창 토글 및 브라우저 뒤로가기 대응
+        function toggleChat(show) {
+            if (show) {
+                chatWindow.style.display = 'flex';
+                // 뒤로가기 버튼 대응을 위한 상태 추가
+                if (window.location.hash !== '#chat') {
+                    history.pushState({view: 'chat'}, '오순이 채팅', '#chat');
+                }
+            } else {
+                chatWindow.style.display = 'none';
+                if (window.location.hash === '#chat') {
+                    history.back();
+                }
+            }
+        }
 
-        closeChat.addEventListener('click', () => {
-            chatWindow.style.display = 'none';
+        chatFab.addEventListener('click', () => toggleChat(true));
+        closeChat.addEventListener('click', () => toggleChat(false));
+
+        // 뒤로가기 버튼 감지하여 채팅창 닫기
+        window.addEventListener('popstate', (e) => {
+            if (chatWindow.style.display === 'flex') {
+                chatWindow.style.display = 'none';
+            } else {
+                handleRouting(); // 기존 라우팅 처리
+            }
         });
 
         const GAS_URL = 'https://script.google.com/macros/s/AKfycbwnSy3hPnY3CmV6FF-s4h9yQP_tlR_PWK56d_wFF6ns-xXiOxZIad8JGMAxor1Mx8mS/exec';
@@ -796,26 +847,31 @@
             chatInput.value = '';
             chatBody.scrollTop = chatBody.scrollHeight;
 
-            // Loading AI
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'msg ai';
-            aiDiv.innerHTML = '<span class="loading-dots">오순이가 생각 중입니다...</span>';
-            chatBody.appendChild(aiDiv);
+            // Loading AI (with Avatar)
+            const aiContainer = document.createElement('div');
+            aiContainer.className = 'ai-msg-container';
+            aiContainer.innerHTML = `
+                <div class="ai-avatar"><img src="osunyi_logo.png" alt="오"></div>
+                <div class="msg ai"><span class="loading-dots">오순이가 생각 중입니다...</span></div>
+            `;
+            chatBody.appendChild(aiContainer);
             chatBody.scrollTop = chatBody.scrollHeight;
 
+            const aiBubble = aiContainer.querySelector('.msg.ai');
+
             try {
-                // GET 방식으로 전환하여 실제 AI 답변을 읽어옵니다.
                 const response = await fetch(`${GAS_URL}?message=${encodeURIComponent(text)}&userId=user_${Date.now()}`);
                 const result = await response.json();
                 
                 if (result.status === 'success') {
-                    aiDiv.innerText = result.reply; // 진짜 AI 답변 출력
+                    aiBubble.innerText = result.reply;
                 } else {
-                    aiDiv.innerText = "리더님, 답변을 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+                    aiBubble.innerText = "리더님, 답변을 가져오는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
                 }
             } catch (err) {
-                aiDiv.innerText = "죄송합니다, 잠시 연결이 원활하지 않습니다. 🙏";
+                aiBubble.innerText = "죄송합니다, 잠시 연결이 원활하지 않습니다. 🙏";
             }
+            chatBody.scrollTop = chatBody.scrollHeight;
         }
 
         sendBtn.addEventListener('click', sendMessage);
