@@ -1,5 +1,5 @@
 /**
- * 오순이 챗봇 엔진 (osunyi_backend.gs) v2.1
+ * 오순이 챗봇 엔진 (osunyi_backend.gs) v2.2
  * [핵심 기능]
  * 1. Gemini API 연결: gemini-3.1-flash-lite-preview 모델 사용.
  * 2. 실시간 폴더 로딩: Drive '오순이' 폴더 실시간 스캔 → 자동 반영
@@ -7,16 +7,18 @@
  *
  * [보안]
  * API 키는 GAS 프로젝트 설정 > 스크립트 속성에 저장해야 합니다.
- * 설정 방법: 스크립트 편집기 > 프로젝트 설정 > 스크립트 속성 추가
  * 속성 이름: GEMINI_API_KEY
- * 속성 값: (실제 API 키 입력)
+ *
+ * [v2.2 변경사항]
+ * - DriveApp.searchFolders() → DriveApp.getRootFolder() 방식으로 변경
+ *   (searchFolders의 한글 쿼리 'q' 파라미터 버그 우회)
  */
 
 const CONFIG = {
   // ⚠️ API 키는 스크립트 속성에서 로드합니다 (코드에 직접 입력 금지)
   get GEMINI_API_KEY() {
     const key = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
-    if (!key) throw new Error('GEMINI_API_KEY가 스크립트 속성에 설정되지 않았습니다. 프로젝트 설정에서 추가해주세요.');
+    if (!key) throw new Error('GEMINI_API_KEY가 스크립트 속성에 설정되지 않았습니다.');
     return key;
   },
   MODEL_NAME: 'gemini-3.1-flash-lite-preview',
@@ -34,22 +36,19 @@ function doGet(e) {
   try {
     const action = e.parameter.action;
 
-    // Drive 폴더 파일 목록 반환 (자료실)
     if (action === 'getFolderFiles') {
       return getFolderFiles(e.parameter.folderName);
     }
 
-    // Drive CSV 파일 내용 반환 (일정)
     if (action === 'getFileContent') {
       return getFileContent(e.parameter.fileName);
     }
 
-    // 챗봇
     const userMessage = e.parameter.message;
     const userId = e.parameter.userId || 'guest';
 
     if (!userMessage) {
-      return createJsonResponse({ status: 'success', message: 'Osunyi Engine v2.1 Running' });
+      return createJsonResponse({ status: 'success', message: 'Osunyi Engine v2.2 Running' });
     }
 
     const reply = handleChat(userMessage, userId);
@@ -87,25 +86,35 @@ function doPost(e) {
 
 // =============================================
 // Drive 실시간 스캔
+// [v2.2] searchFolders 대신 폴더 순회 방식으로 변경
+//        (한글 폴더명 사용 시 searchFolders의 'q' 파라미터 버그 우회)
 // =============================================
 
-/** '오순이' 루트 폴더 탐색 */
+/** '오순이' 루트 폴더 탐색 - 내 드라이브 전체를 순회하여 찾음 */
 function getRootFolder() {
-  const folders = DriveApp.searchFolders(
-    "name = '" + CONFIG.ROOT_FOLDER_NAME + "' and trashed = false"
-  );
-  return folders.hasNext() ? folders.next() : null;
+  try {
+    // 방법 1: 내 드라이브 루트에서 직접 탐색
+    const rootFolders = DriveApp.getRootFolder().getFoldersByName(CONFIG.ROOT_FOLDER_NAME);
+    if (rootFolders.hasNext()) return rootFolders.next();
+
+    // 방법 2: 공유 드라이브 포함 전체 탐색
+    const allFolders = DriveApp.getFoldersByName(CONFIG.ROOT_FOLDER_NAME);
+    if (allFolders.hasNext()) return allFolders.next();
+
+    return null;
+  } catch (e) {
+    Logger.log('getRootFolder error: ' + e.toString());
+    return null;
+  }
 }
 
 /**
  * 자료실 폴더 내 파일 목록을 카테고리(서브폴더)별로 반환
- * 구조: 오순이/자료실/{카테고리명}/{파일들}
- * 직원이 파일 올리면 앱에 자동 반영
  */
 function getFolderFiles(folderName) {
   const rootFolder = getRootFolder();
   if (!rootFolder) {
-    return createJsonResponse({ status: 'error', message: '오순이 폴더를 찾을 수 없습니다.' });
+    return createJsonResponse({ status: 'error', message: '오순이 폴더를 찾을 수 없습니다. Drive에 "오순이" 폴더가 있는지 확인해주세요.' });
   }
 
   const targetFolders = rootFolder.getFoldersByName(folderName);
@@ -116,7 +125,6 @@ function getFolderFiles(folderName) {
   const targetFolder = targetFolders.next();
   const result = [];
 
-  // 서브폴더 = 카테고리
   const subFolders = targetFolder.getFolders();
   while (subFolders.hasNext()) {
     const sub = subFolders.next();
@@ -138,7 +146,6 @@ function getFolderFiles(folderName) {
     if (category.files.length > 0) result.push(category);
   }
 
-  // 루트 레벨 파일 (카테고리 없는 것)
   const rootFiles = targetFolder.getFiles();
   const uncategorized = { category: '기타', files: [] };
   while (rootFiles.hasNext()) {
@@ -158,8 +165,7 @@ function getFolderFiles(folderName) {
 }
 
 /**
- * CSV 파일 내용 반환 (일정 등)
- * fileName에 'schedule' 포함 → 일정 폴더에서 탐색
+ * CSV 파일 내용 반환
  */
 function getFileContent(fileName) {
   const rootFolder = getRootFolder();
@@ -193,11 +199,8 @@ function formatSize(bytes) {
 // =============================================
 function handleChat(message, userId) {
   const rules = fetchExternalContent(CONFIG.RULES_URL);
-
-  // 스킬 파일 로드 (없으면 빈 문자열로 처리)
   const skills = fetchExternalContent(CONFIG.SKILLS_URL);
   const skillsContext = skills && skills !== '정보 로드 실패' ? '\n\n[활성 스킬]\n' + skills : '';
-
   const systemPrompt = rules + skillsContext;
 
   const history = getMemory(userId);
@@ -228,7 +231,8 @@ function callGemini(message, history, systemPrompt) {
   if (result.candidates && result.candidates[0]) {
     return result.candidates[0].content.parts[0].text;
   } else {
-    throw new Error('API 호출 실패: ' + JSON.stringify(result));
+    Logger.log('Gemini API Error: ' + JSON.stringify(result));
+    throw new Error('AI 응답 생성 실패. 잠시 후 다시 시도해주세요.');
   }
 }
 
@@ -271,4 +275,17 @@ function saveMemory(userId, userMsg, aiMsg) {
 function createJsonResponse(data) {
   return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// =============================================
+// 디버그용 테스트 함수 (GAS 편집기에서 직접 실행)
+// =============================================
+function testDriveAccess() {
+  const folder = getRootFolder();
+  Logger.log(folder ? '✅ 오순이 폴더 찾음: ' + folder.getName() : '❌ 오순이 폴더 없음');
+}
+
+function testChatResponse() {
+  const result = handleChat('안녕하세요', 'test_user');
+  Logger.log('챗봇 응답: ' + result);
 }
