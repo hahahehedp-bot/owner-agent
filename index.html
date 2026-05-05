@@ -7,7 +7,7 @@
     
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json?v=1.0.2">
-    <link rel="icon" type="image/png" href="osunyi_logo.png?v=1.0.2">
+    <link rel="icon" type="image/png" href="assets/osunyi_logo.png?v=2.1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="오순이">
@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Mobile App Icons -->
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="favicon-pink.png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="assets/favicon-pink.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -669,10 +669,10 @@
         <header>
             <div class="logo-wrapper">
                 <div class="official-logo-mark" style="border:none; overflow: hidden; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 75px; height: 75px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-                    <img src="osunyi_logo.png" alt="오순이 캐릭터" style="height: 100px; width: auto; object-fit: contain;">
+                    <img src="assets/osunyi_logo.png" alt="오순이 캐릭터" style="height: 100px; width: auto; object-fit: contain;">
                 </div>
                 <div class="logo-text-group" style="height: 60px; width: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-left: -10px;">
-                    <img src="osunyi_text.png" alt="오순이 이름" style="height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-top: 2px;">
+                    <img src="assets/osunyi_text.png" alt="오순이 이름" style="height: 180px; width: auto; object-fit: contain; mix-blend-mode: multiply; margin-top: 2px;">
                 </div>
             </div>
         </header>
@@ -770,7 +770,7 @@
             <div style="flex: 1;"></div> <!-- Push messages to bottom -->
             <div class="ai-msg-container">
                 <div class="ai-header-info">
-                    <div class="ai-avatar"><img src="osunyi_logo.png" alt="오"></div>
+                    <div class="ai-avatar"><img src="assets/osunyi_logo.png" alt="오"></div>
                     <span class="ai-name-label">오너 AI 비서 오순이</span>
                 </div>
                 <div class="msg ai">반갑습니다, 리더님! 😊 (주)오너의 든든한 조력자 **오순이**예요. 리버스12 마케팅이나 오늘 업무에 대해 무엇이든 저에게 물어보세요!</div>
@@ -874,7 +874,7 @@
             }
         });
 
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwnSy3hPnY3CmV6FF-s4h9yQP_tlR_PWK56d_wFF6ns-xXiOxZIad8JGMAxor1Mx8mS/exec';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbwnSy3hPnY3CmV6FF-s4h9yQP_tlR_PWK56d_wFF6ns-xXiOxZIad8JGMAxor1Mx8mS/exec'; // v13 배포
 
         // 메시지 전송 함수
         async function sendMessage() {
@@ -894,7 +894,7 @@
             aiContainer.className = 'ai-msg-container';
             aiContainer.innerHTML = `
                 <div class="ai-header-info">
-                    <div class="ai-avatar"><img src="osunyi_logo.png" alt="오"></div>
+                    <div class="ai-avatar"><img src="assets/osunyi_logo.png" alt="오"></div>
                     <span class="ai-name-label">오너 AI 비서 오순이</span>
                 </div>
                 <div class="msg ai"><span class="loading-dots">오순이가 생각 중입니다...</span></div>
