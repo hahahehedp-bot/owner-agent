@@ -1,16 +1,27 @@
 /**
- * 오순이 챗봇 엔진 (osunyi_backend.gs) v2.0
+ * 오순이 챗봇 엔진 (osunyi_backend.gs) v2.1
  * [핵심 기능]
- * 1. 유음 API 연결: Gemini 3.1 Flash Lite 모델 사용.
+ * 1. Gemini API 연결: gemini-3.1-flash-lite-preview 모델 사용.
  * 2. 실시간 폴더 로딩: Drive '오순이' 폴더 실시간 스캔 → 자동 반영
  * 3. 스마트 메모리: 구글 시트를 사용한 대화 기록 유지.
+ *
+ * [보안]
+ * API 키는 GAS 프로젝트 설정 > 스크립트 속성에 저장해야 합니다.
+ * 설정 방법: 스크립트 편집기 > 프로젝트 설정 > 스크립트 속성 추가
+ * 속성 이름: GEMINI_API_KEY
+ * 속성 값: (실제 API 키 입력)
  */
 
 const CONFIG = {
-  GEMINI_API_KEY: 'AIzaSyAYKTuAlH4an4AY3bhGxm1rkpR7zAsgXtA',
+  // ⚠️ API 키는 스크립트 속성에서 로드합니다 (코드에 직접 입력 금지)
+  get GEMINI_API_KEY() {
+    const key = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+    if (!key) throw new Error('GEMINI_API_KEY가 스크립트 속성에 설정되지 않았습니다. 프로젝트 설정에서 추가해주세요.');
+    return key;
+  },
   MODEL_NAME: 'gemini-3.1-flash-lite-preview',
   RULES_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/osunyi-rules.md',
-  SKILLS_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/rules/owner-tools.md',
+  SKILLS_URL: 'https://raw.githubusercontent.com/hahahehedp-bot/owner-agent/main/.agent/skills/owner-tools.md',
   SHEET_NAME: 'ChatMemory',
   LOG_SHEET_ID: '1LjnVu9vHv3TkY2_Ji_YnFslXpOb1VSF36sx_28MX7cA',
   ROOT_FOLDER_NAME: '오순이'
@@ -38,7 +49,7 @@ function doGet(e) {
     const userId = e.parameter.userId || 'guest';
 
     if (!userMessage) {
-      return createJsonResponse({ status: 'success', message: 'Osunyi Engine v2.0 Running' });
+      return createJsonResponse({ status: 'success', message: 'Osunyi Engine v2.1 Running' });
     }
 
     const reply = handleChat(userMessage, userId);
@@ -182,8 +193,12 @@ function formatSize(bytes) {
 // =============================================
 function handleChat(message, userId) {
   const rules = fetchExternalContent(CONFIG.RULES_URL);
+
+  // 스킬 파일 로드 (없으면 빈 문자열로 처리)
   const skills = fetchExternalContent(CONFIG.SKILLS_URL);
-  const systemPrompt = rules + '\n\n[비즈니스 맥락]\n' + skills;
+  const skillsContext = skills && skills !== '정보 로드 실패' ? '\n\n[활성 스킬]\n' + skills : '';
+
+  const systemPrompt = rules + skillsContext;
 
   const history = getMemory(userId);
   const aiResponse = callGemini(message, history, systemPrompt);
@@ -213,7 +228,7 @@ function callGemini(message, history, systemPrompt) {
   if (result.candidates && result.candidates[0]) {
     return result.candidates[0].content.parts[0].text;
   } else {
-    throw new Error('API 호출 실패. 키 설정을 확인해 주세요. ' + JSON.stringify(result));
+    throw new Error('API 호출 실패: ' + JSON.stringify(result));
   }
 }
 
